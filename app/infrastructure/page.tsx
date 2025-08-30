@@ -15,15 +15,17 @@ const TYPE_META: Record<FacilityType, { label: string; color: string }> = {
 
 export default function FacilityFilter() {
   const [filters, setFilters] = useState<Record<FacilityType, boolean>>({
-    bin: true,
-    toilet: true,
-    water: true,
-    plug: true,
-    bench: true,
+    bin: false,
+    toilet: false,
+    water: false,
+    plug: false,
+    bench: false,
   });
 
 const { isLoaded } = useLoadScript({
   googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+  language: 'en',
+  region: 'US',
 });
 
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -33,6 +35,36 @@ const { isLoaded } = useLoadScript({
     type: FacilityType;
     position: { lat: number; lng: number };
   }[]>([]);
+
+  const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null);
+
+  const getRandomNearbyLatLng = (center: { lat: number; lng: number }, radiusMeters = 800) => {
+    const r = radiusMeters;
+    const u = Math.random();
+    const v = Math.random();
+    const w = r * Math.sqrt(u);
+    const t = 2 * Math.PI * v;
+    const dx = w * Math.cos(t);
+    const dy = w * Math.sin(t);
+    const dLat = dy / 111320;
+    const dLng = dx / (111320 * Math.cos(center.lat * Math.PI / 180));
+    return { lat: center.lat + dLat, lng: center.lng + dLng };
+  };
+
+  const getRandomLandNear = async (center: { lat: number; lng: number }, attempts = 8, radiusMeters = 800): Promise<{ lat: number; lng: number } | null> => {
+    const geocoder = geocoderRef.current;
+    if (!geocoder) return getRandomNearbyLatLng(center, radiusMeters);
+    for (let i = 0; i < attempts; i++) {
+      const loc = getRandomNearbyLatLng(center, radiusMeters);
+      const ok = await new Promise<boolean>((resolve) => {
+        geocoder.geocode({ location: loc }, (results, status) => {
+          resolve(status === 'OK' && !!results && results.length > 0);
+        });
+      });
+      if (ok) return loc;
+    }
+    return null;
+  };
 
   const getRandomLandLatLng = async (attempts = 8): Promise<{ lat: number; lng: number } | null> => {
     const g = (window as any).google as typeof google;
@@ -67,12 +99,20 @@ const { isLoaded } = useLoadScript({
   };
 
   const addRandomMarkers = async (type: FacilityType, count = 5) => {
-    const newOnes: { type: FacilityType; position: { lat: number; lng: number } }[] = [];
-    for (let i = 0; i < count; i++) {
-      const loc = await getRandomLandLatLng();
-      if (loc) newOnes.push({ type, position: loc });
+    const base = userPos;
+    const list: { type: FacilityType; position: { lat: number; lng: number } }[] = [];
+    if (base) {
+      for (let i = 0; i < count; i++) {
+        const loc = await getRandomLandNear(base);
+        if (loc) list.push({ type, position: loc });
+      }
+    } else {
+      for (let i = 0; i < count; i++) {
+        const loc = await getRandomLandLatLng();
+        if (loc) list.push({ type, position: loc });
+      }
     }
-    if (newOnes.length) setMarkers(prev => [...prev, ...newOnes]);
+    if (list.length) setMarkers(prev => [...prev, ...list]);
   };
 
   const clearMarkers = (type: FacilityType) => {
@@ -107,7 +147,7 @@ const { isLoaded } = useLoadScript({
               title={TYPE_META[t].label}
               style={{
                 background: TYPE_META[t].color,
-                opacity: active ? 1 : 0.35,
+                opacity: 1,
               }}
             >
               <img src={`/icons/${t}.svg`} alt="" className="w-5 h-5 pointer-events-none" />
@@ -121,22 +161,49 @@ const { isLoaded } = useLoadScript({
 
       {isLoaded && (
         <GoogleMap
-          mapContainerClassName="w-full min-h-[60vh] rounded-md overflow-hidden"
-          center={defaultCenter}
+          mapContainerClassName="w-full rounded-md overflow-hidden min-h-[60vh]"
+          center={userPos ?? defaultCenter}
           zoom={12}
           onLoad={(map) => {
             mapRef.current = map;
             geocoderRef.current = new google.maps.Geocoder();
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  const p = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                  setUserPos(p);
+                  map.panTo(p);
+                },
+                () => {},
+                { enableHighAccuracy: true, maximumAge: 10000, timeout: 10000 }
+              );
+            }
           }}
         >
+          {userPos && (
+            <Marker
+              position={userPos}
+              zIndex={Number.MAX_SAFE_INTEGER}
+              icon={{
+                url: "/icons/my-location.svg",
+                scaledSize: new google.maps.Size(36, 36),
+                anchor: new google.maps.Point(18, 18),
+              }}
+              options={{
+                optimized: false
+              }}
+            />
+          )}
           {markers.map((m, i) => (
             <Marker
               key={`${m.type}-${i}-${m.position.lat.toFixed(5)}-${m.position.lng.toFixed(5)}`}
               position={m.position}
               icon={{
-                url: `/icons/${m.type}.svg`,
-                scaledSize: new google.maps.Size(28, 28),
-                anchor: new google.maps.Point(14, 14),
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: '#10B981',
+                fillOpacity: 1,
+                strokeWeight: 0,
+                scale: 6,
               }}
             />
           ))}
