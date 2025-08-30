@@ -1,6 +1,93 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
+// A-Frame JSX aliases to avoid TS errors
+const AScene: any = 'a-scene'
+const ASky: any = 'a-sky'
+const AEntity: any = 'a-entity'
+
+// Inline VRSkyModal component to avoid import issues
+function VRSkyModal({
+  open,
+  src,
+  onClose,
+}: {
+  open: boolean
+  src?: string
+  onClose: () => void
+}) {
+  const [mounted, setMounted] = useState(false)
+  const [ready, setReady] = useState(false)
+  const [pano, setPano] = useState('/images/vr/sechelt.jpg')
+
+  useEffect(() => { setMounted(true) }, [])
+
+  useEffect(() => {
+    if (!open) { setReady(false); return }
+    let alive = true
+    import('aframe').then(() => alive && setReady(true))
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const onPopState = () => onClose()
+    
+    document.addEventListener('keydown', onKey)
+    window.addEventListener('popstate', onPopState)
+    document.body.classList.add('overflow-hidden')
+    
+    // Push history state for back button support
+    history.pushState({ modal: 'vr' }, '', location.href)
+    
+    return () => {
+      alive = false
+      document.removeEventListener('keydown', onKey)
+      window.removeEventListener('popstate', onPopState)
+      document.body.classList.remove('overflow-hidden')
+    }
+  }, [open, onClose])
+
+  useEffect(() => {
+    if (!open) return
+    const candidate = src || '/images/vr/sechelt.jpg'
+    const img = new Image()
+    img.onload = () => setPano(candidate)
+    img.onerror = () => setPano('/images/vr/sechelt.jpg')
+    img.src = candidate
+  }, [open, src])
+
+  if (!mounted || !open || !ready) return null
+
+  return (
+    <div className="fixed inset-0 z-[60] bg-black" suppressHydrationWarning>
+      <div className="absolute top-0 left-0 right-0 p-4 z-[70] pointer-events-none flex justify-end">
+        <button
+          onClick={() => {
+            onClose()
+            try { history.back() } catch {}
+          }}
+          className="pointer-events-auto bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors"
+        >
+          Exit 360°
+        </button>
+      </div>
+
+      <div
+        className="absolute top-0 left-0 right-0 h-16 z-[65]"
+        onClick={onClose}
+      />
+
+      <div className="w-full h-full">
+        <AScene embedded vr-mode-ui="enabled: true" className="w-full h-full">
+          <ASky src={pano} rotation="0 -90 0" />
+          <AEntity 
+            camera 
+            look-controls="touchEnabled: true; mouseEnabled: true; magicWindowTrackingEnabled: true" 
+            wasd-controls-enabled="false" 
+          />
+        </AScene>
+      </div>
+    </div>
+  )
+}
 
 // Urban Green Trail routes data
 const greenTrailRoutes = [
@@ -29,7 +116,8 @@ const greenTrailRoutes = [
         story: "This creek flowed here for thousands of years before being buried under concrete in 1923. In 2019, community activists convinced the council to 'daylight' it again, creating this small urban oasis where native fish have returned.",
         impact: "Habitat restored for 12+ native species",
         year: "2019",
-        type: "Water Restoration"
+        type: "Water Restoration",
+        vrImageUrl: "/images/vr/forgotten-creek-360.jpg"
       },
       {
         id: 2,
@@ -39,7 +127,7 @@ const greenTrailRoutes = [
         walkTime: "7 min",
         walkDistance: "520m",
         totalTime: "12 min",
-        story: "Started illegally in 2015 when residents got tired of looking at this empty lot. They planted vegetables at night, installed rain collection barrels, and created Sydney's first 'guerrilla garden.' The council tried to remove it twice before officially adopting it.",
+        story: "The 'Green Bans' movement started here in 1971, when construction workers refused to demolish historic buildings, combining labor rights with environmental activism.",
         impact: "150kg vegetables grown annually",
         year: "2015",
         type: "Community Garden"
@@ -55,7 +143,8 @@ const greenTrailRoutes = [
         story: "This engineered wetland treats 2 million liters of street runoff each year using only plants and beneficial bacteria. The curved design mimics natural creek bends, and the native sedges can remove 85% of urban pollutants.",
         impact: "2M liters water treated annually",
         year: "2017",
-        type: "Water Treatment"
+        type: "Water Treatment",
+        vrImageUrl: "/images/vr/rain-garden-360.jpg"
       },
       {
         id: 4,
@@ -68,7 +157,8 @@ const greenTrailRoutes = [
         story: "This office building's rooftop supports a micro-forest with over 200 native plants. It absorbs 15 tonnes of CO2 annually and provides habitat for 30+ bird species. The building's energy costs dropped 30% after installation.",
         impact: "15 tonnes CO2 absorbed/year",
         year: "2020",
-        type: "Green Roof"
+        type: "Green Roof",
+        vrImageUrl: "/images/vr/rooftop-forest-360.jpg"
       },
       {
         id: 5,
@@ -265,6 +355,8 @@ const greenTrailRoutes = [
 export default function GreenTrailPage() {
   const [selectedRoute, setSelectedRoute] = useState<any>(null)
   const [selectedStop, setSelectedStop] = useState<any>(null)
+  const [showVR, setShowVR] = useState(false)
+  const [vrSrc, setVrSrc] = useState<string>('')
 
   return (
     <div className="h-screen">
@@ -527,6 +619,17 @@ export default function GreenTrailPage() {
                   <button className="flex-1 bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium">
                     Get Directions
                   </button>
+                  {selectedStop?.vrImageUrl && (
+                    <button
+                      onClick={() => { 
+                        setVrSrc(selectedStop.vrImageUrl)
+                        setShowVR(true) 
+                      }}
+                      className="flex-1 bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                    >
+                      View in 360°
+                    </button>
+                  )}
                   <button className="flex-1 bg-emerald-600 text-white px-4 py-3 rounded-lg hover:bg-emerald-700 transition-colors font-medium">
                     Mark as Visited
                   </button>
@@ -556,6 +659,10 @@ export default function GreenTrailPage() {
           </div>
         </div>
       </div> */}
+
+
+      {/* VR Modal */}
+      <VRSkyModal open={showVR} src={vrSrc} onClose={() => setShowVR(false)} />
     </div>
   )
 }
