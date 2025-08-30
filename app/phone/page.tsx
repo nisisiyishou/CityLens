@@ -55,7 +55,9 @@ export default function Home() {
 
 
 
-            <div className="absolute inset-0 bg-emerald-900/40" />
+            {/* <div className="absolute inset-0 bg-emerald-900/40" /> */}
+
+            <div className="absolute inset-0 bg-emerald-900/25" />
 
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-emerald-900/70 via-transparent to-transparent" />
 
