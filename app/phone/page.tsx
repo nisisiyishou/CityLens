@@ -72,22 +72,22 @@ export default function Home() {
                 <h1 className="mt-3 text-3xl">Sydney City Lens</h1>
 
                 <button
-                    className="mt-8 inline-flex items-center gap-2 border-t border-b border-t-white/70 border-b-white/70 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
-                    aria-label="Learn more"
+                    className="display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+                    aria-label="b"
                 >
                     Urban Green Trail
                 </button>
 
                 <button
-                    className="mt-5 inline-flex items-center gap-2 border-t border-b border-t-white/70 border-b-white/70 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
-                    aria-label="Learn more"
+                    className="display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+                    aria-label="b"
                 >
                     Forgotten Stories Line
                 </button>
 
                 <button
-                    className="mt-5 inline-flex items-center gap-2 border-t border-b border-t-white/70 border-b-white/70 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
-                    aria-label="Learn more"
+                    className="display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+                    aria-label="b"
                 >
                     Infractructure Path
                 </button>

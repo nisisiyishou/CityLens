@@ -7,7 +7,7 @@
     min-width: 4rem;
     min-height: 4rem;
 
-    background-color: #63bf76;
+    background-color: #63bf76dd;
 
     border-radius: 30%;
 
@@ -23,4 +23,7 @@
     color: #63bf76;
 }
 
-
+.display-button {
+    border-top: 1.5px #63bf76 solid;
+    border-bottom: 1.5px #63bf76 solid;
+}
