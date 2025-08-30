@@ -554,7 +554,7 @@ export default function GreenTrailPage() {
                             </span>
                             <span className="text-white text-xs">{stop.year}</span>
                           </div>
-                          <h3 className="text-lg font-semibold">{stop.name}</h3>
+                          <h3 className="text-green-700 text-lg font-semibold">{stop.name}</h3>
                           <p className="text-green-600 mb-2 italic text-sm">{stop.teaser}</p>
                           <p className="text-emerald-700 font-medium text-xs mb-2">
                             Impact: {stop.impact}
@@ -595,7 +595,7 @@ export default function GreenTrailPage() {
                     </span>
                     <span className="text-white text-sm">{selectedStop.year}</span>
                   </div>
-                  <h2 className="text-2xl font-bold mb-2">{selectedStop.name}</h2>
+                  <h2 className="text-green-700 text-2xl font-bold mb-2">{selectedStop.name}</h2>
                   <p className="text-green-600 italic text-lg">{selectedStop.teaser}</p>
                 </div>
                 <button
