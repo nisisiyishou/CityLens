@@ -6,11 +6,11 @@ import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api'
 type FacilityType = 'bin' | 'toilet' | 'water' | 'plug' | 'bench'
 
 const TYPE_META: Record<FacilityType, { label: string; color: string }> = {
-  bin:    { label: 'Bin',           color: '#16a34a' },
-  toilet: { label: 'Toilet',        color: '#2563eb' },
-  water:  { label: 'Water Station', color: '#0891b2' },
-  plug:   { label: 'Power Plug',    color: '#a855f7' },
-  bench:  { label: 'Bench',         color: '#92400e' },
+  bin:    { label: 'Bin',           color: '#78d49aff' },
+  toilet: { label: 'Toilet',        color: '#85a9f8e7' },
+  water:  { label: 'Water Station', color: '#7dd3e9ff' },
+  plug:   { label: 'Power Plug',    color: '#b791dbff' },
+  bench:  { label: 'Bench',         color: '#f49960ff' },
 }
 
 export default function FacilityFilter() {
@@ -210,7 +210,9 @@ export default function FacilityFilter() {
         <GoogleMap
           mapContainerClassName="w-full overflow-hidden flex-grow"
           center={userPos ?? defaultCenter}
-          zoom={12}
+          zoom={17
+    
+}
           options={mapOptions}
           onLoad={(map) => {
             mapRef.current = map;
