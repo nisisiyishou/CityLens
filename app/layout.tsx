@@ -17,19 +17,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        {/* Background image with overlay for transparency */}
-        <div 
-          className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
-            backgroundImage: 'url("/Sydney Harbour Bridge.jpg")',
-            zIndex: -2 
-          }}
-        ></div>
-        {/* Semi-transparent overlay to reduce image clarity */}
-        <div className="fixed inset-0 bg-white bg-opacity-70 z-[-1]"></div>
-        
+      <body className={inter.className + ' min-h-screen relative'}>
+        {/* Background image */}
+        <div
+          className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url("/sydney-bridge.jpg")' }}
+        />
+
+        {/* Semi-transparent overlay */}
+        <div className="fixed inset-0 -z-0 bg-white/70" />
+
+        {/* Navigation bar */}
         <Navbar />
+
+        {/* Main content */}
         <main className="relative z-10">
           {children}
         </main>

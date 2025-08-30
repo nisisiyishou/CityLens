@@ -1,6 +1,12 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
+
+// A-Frame JSX aliases to silence TS
+const AScene: any = 'a-scene'
+const ASky: any = 'a-sky'
+const AEntity: any = 'a-entity'
 
 // Mock data for demo
 const mockRoutes = [
@@ -24,7 +30,7 @@ const mockRoutes = [
         walkDistance: "0m",
         totalTime: "0 min",
         story: "In 1917, this station became the epicenter of Australia's largest general strike. Over 100,000 workers walked off the job, paralyzing the city for weeks.",
-        vrImageUrl: null,
+        vrImageUrl: "/images/vr/central-station-1917-360.jpg",
         year: "1917"
       },
       {
@@ -36,8 +42,7 @@ const mockRoutes = [
         walkDistance: "450m",
         totalTime: "11 min",
         story: "Behind these brick walls, tramway workers planned the strikes that would change Sydney's labor laws forever. The depot's hidden basement served as a makeshift union hall.",
-        audioUrl: null,
-        vrImageUrl: null,
+        vrImageUrl: "/images/vr/old-tram-depot-360.jpg",
         year: "1920s"
       },
       {
@@ -48,7 +53,9 @@ const mockRoutes = [
         walkTime: "8 min",
         walkDistance: "620m",
         totalTime: "24 min",
-        story: "The 'Green Bans' movement started here in 1971, when construction workers refused to demolish historic buildings, combining labor rights with environmental activism."
+        story: "The 'Green Bans' movement started here in 1971, when construction workers refused to demolish historic buildings, combining labor rights with environmental activism.",
+        vrImageUrl: "/images/vr/darling-harbour-360.jpg",
+        year: "1971"
       },
       {
         id: 4,
@@ -58,7 +65,9 @@ const mockRoutes = [
         walkTime: "12 min",
         walkDistance: "900m",
         totalTime: "41 min",
-        story: "Every Sunday from 1920-1950, union leaders would stand on improvised platforms here, speaking to crowds about workers' rights and social justice."
+        story: "Every Sunday from 1920-1950, union leaders would stand on improvised platforms here, speaking to crowds about workers' rights and social justice.",
+        vrImageUrl: "/images/vr/hyde-park-corner-360.jpg",
+        year: "1920-1950"
       },
       {
         id: 5,
@@ -68,7 +77,9 @@ const mockRoutes = [
         walkTime: "5 min",
         walkDistance: "300m",
         totalTime: "51 min",
-        story: "In 1888, women working in nearby factories held their first organized meeting in this narrow lane, demanding equal pay and safer working conditions."
+        story: "In 1888, women working in nearby factories held their first organized meeting in this narrow lane, demanding equal pay and safer working conditions.",
+        vrImageUrl: "/images/vr/old-brewery-lane-360.jpg",
+        year: "1888"
       },
       {
         id: 6,
@@ -78,7 +89,9 @@ const mockRoutes = [
         walkTime: "4 min",
         walkDistance: "280m",
         totalTime: "55 min",
-        story: "Once stood here was the original headquarters of the Labor Council. Though the building is gone, the legacy of worker solidarity remains in Sydney's progressive labor laws."
+        story: "Once stood here was the original headquarters of the Labor Council. Though the building is gone, the legacy of worker solidarity remains in Sydney's progressive labor laws.",
+        vrImageUrl: "/images/vr/union-square-360.jpg",
+        year: "Early 1900s"
       }
     ]
   },
@@ -310,6 +323,78 @@ export default function StorylinesPage() {
   const [showVRViewer, setShowVRViewer] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
 
+  // Mount guard so VR only renders on client
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
+
+  // A-Frame readiness + pano fallback
+  const [aframeReady, setAframeReady] = useState(false)
+  const [panoSrc, setPanoSrc] = useState("/images/vr/sechelt.jpg")
+
+  // Load A-Frame only when the VR viewer opens, then mark ready
+  useEffect(() => {
+    let alive = true
+    if (showVRViewer) {
+      import('aframe').then(() => {
+        if (alive) setAframeReady(true)
+      })
+    } else {
+      setAframeReady(false)
+    }
+    return () => { alive = false }
+  }, [showVRViewer])
+
+  // Preflight the pano image; fallback to sample if missing
+  useEffect(() => {
+    if (!showVRViewer || !selectedStop) return
+    const candidate = selectedStop.vrImageUrl || "/images/vr/sechelt.jpg"
+    const img = new Image()
+    img.onload = () => setPanoSrc(candidate)
+    img.onerror = () => setPanoSrc("/images/vr/sechelt.jpg")
+    img.src = candidate
+  }, [showVRViewer, selectedStop])
+
+  // Close VR on Escape key
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showVRViewer) setShowVRViewer(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [showVRViewer])
+
+  // Push a history entry when VR opens so Back closes the modal
+  useEffect(() => {
+    if (!showVRViewer) return
+
+    const onPopState = () => setShowVRViewer(false)
+    window.addEventListener('popstate', onPopState)
+
+    // Push a dummy state to trap the first Back press
+    history.pushState({ modal: 'vr' }, '', location.href)
+
+    return () => {
+      window.removeEventListener('popstate', onPopState)
+    }
+  }, [showVRViewer])
+
+  // Sync closing if user exits VR mode via headset/system UI
+  useEffect(() => {
+    if (!aframeReady || !showVRViewer) return
+    const scene = document.querySelector('a-scene') as any
+    if (!scene) return
+
+    const onExit = () => setShowVRViewer(false)
+    scene.addEventListener('exit-vr', onExit)
+    return () => scene.removeEventListener('exit-vr', onExit)
+  }, [aframeReady, showVRViewer])
+
+  // Prevent body scroll when VR viewer is open
+  useEffect(() => {
+    document.body.classList.toggle('overflow-hidden', showVRViewer)
+    return () => document.body.classList.remove('overflow-hidden')
+  }, [showVRViewer])
+
   // Text-to-speech narration
   const handleNarrate = (text: string) => {
     if (isNarrating) {
@@ -328,14 +413,6 @@ export default function StorylinesPage() {
     utterance.onerror = () => setIsNarrating(false)
     
     speechSynthesis.speak(utterance)
-  }
-
-  // Play pre-recorded audio if available
-  const playAudio = (audioUrl: string) => {
-    if (audioRef.current) {
-      audioRef.current.src = audioUrl
-      audioRef.current.play()
-    }
   }
 
   // Open VR viewer
@@ -577,43 +654,49 @@ export default function StorylinesPage() {
         </div>
       )}
 
-      {/* VR/360° Viewer Modal */}
-      {showVRViewer && selectedStop && (
-        <div className="fixed inset-0 bg-black z-60 flex items-center justify-center">
-          <div className="w-full h-full relative">
-            {/* Close VR Button */}
+      {/* VR/360° Viewer Modal (A-Frame) */}
+      {mounted && aframeReady && showVRViewer && selectedStop && (
+        <div className="fixed inset-0 z-[60] bg-black" suppressHydrationWarning>
+          {/* Top bar overlay that doesn't block drags on the scene */}
+          <div className="absolute top-0 left-0 right-0 p-4 z-[70] pointer-events-none flex justify-end">
             <button
-              onClick={() => setShowVRViewer(false)}
-              className="absolute top-4 right-4 z-70 bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors"
+              onClick={() => {
+                setShowVRViewer(false)
+                // Go back one history entry if we pushed one when opening
+                try { history.back() } catch {}
+              }}
+              className="pointer-events-auto bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors"
             >
-              Exit 360° View
+              Exit 360°
             </button>
-            
-            {/* VR Content */}
-            <div className="w-full h-full flex items-center justify-center">
-              {selectedStop.vrImageUrl ? (
-                <div className="w-full h-full relative overflow-hidden">
-                  <img 
-                    src={selectedStop.vrImageUrl}
-                    alt="360° Historical View"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white p-4 rounded-lg">
-                    <h3 className="font-bold">{selectedStop.name}</h3>
-                    <p className="text-sm">{selectedStop.teaser}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center text-white p-8">
-                  <div className="text-6xl mb-4">🏗️</div>
-                  <h3 className="text-2xl font-bold mb-2">Coming Soon</h3>
-                  <p className="text-gray-300">360° historical recreation for {selectedStop.name} is being developed.</p>
-                  <p className="text-sm text-gray-400 mt-4">
-                    Imagine standing here in {selectedStop.year || 'the past'}, experiencing this location as it once was.
-                  </p>
-                </div>
-              )}
-            </div>
+          </div>
+
+          {/* Clickable top hit-area to close (doesn't block scene drags below this strip) */}
+          <div
+            className="absolute top-0 left-0 right-0 h-16 z-[65]"
+            onClick={() => setShowVRViewer(false)}
+          />
+
+          {/* A-Frame scene fills the screen */}
+          <div className="w-full h-full">
+            <AScene
+              embedded
+              vr-mode-ui="enabled: true"
+              className="w-full h-full"
+            >
+              {/* Use preflight-checked image source */}
+              <ASky
+                src={panoSrc}
+                rotation="0 -90 0"
+              />
+
+              {/* Allow touch/mouse look controls on phones/desktops */}
+              <AEntity
+                camera
+                look-controls="touchEnabled: true; mouseEnabled: true; magicWindowTrackingEnabled: true"
+                wasd-controls-enabled="false"
+              />
+            </AScene>
           </div>
         </div>
       )}
