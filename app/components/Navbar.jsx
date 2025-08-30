@@ -95,7 +95,6 @@ const Navbar = () => {
                 className="block w-full text-left px-6 py-2.5 text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-200"
                 onClick={() => {
                   setIsMenuOpen(false)
-                  alert('Logout function')
                 }}
               >
                 <span className="font-medium">Log out</span>
