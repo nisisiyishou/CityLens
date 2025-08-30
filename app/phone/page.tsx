@@ -3,7 +3,9 @@
 // app/page.tsx
 import Image from "next/image";
 import "./index.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import TypeFX from "typefxjs";
+import { useRouter } from "next/navigation";
 
 function IconMenu() {
     return (
@@ -49,6 +51,9 @@ export default function Home() {
 
     const [now, setNow] = useState(new Date(0));
 
+
+    const router = useRouter()
+
     useEffect(() => {
         const timer = setInterval(() => {
             setNow(new Date());
@@ -77,7 +82,7 @@ export default function Home() {
             {/* 42 */}
             <section className="flex flex-col items-center absolute left-0 right-0 px-6" style={{ top: "35%" }}>
 
-                <p className="reveal mt-3 text-xs tracking-widest uppercase opacity-80"
+                <p className="reveal text-xs tracking-widest uppercase opacity-80"
                     style={{ ["--delay" as any]: "0ms" }}
                 > {formatted}</p>
 
@@ -105,7 +110,17 @@ export default function Home() {
                 >
                     Infractructure Path
                 </button>
-            </section>
+
+                <button
+                    onClick={() => router.push("/phone/ai")}
+                    style={{ "fontFamily": "monospace", ["--delay" as any]: "500ms" }} className="reveal border border-white/30 absolute -top-30 right-8 background-green w-15 h-15 rounded-full flex justify-center items-center borborder-green-300">
+                    AI
+                </button>
+
+
+            </section >
+
+
         </>
     );
 }

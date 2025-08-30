@@ -70,3 +70,17 @@
 .no-scrollbar::-webkit-scrollbar {
     display: none; /* Chrome/Safari */
 }
+
+.chatbox-ai {
+    border-color: #63bf76dd;
+}
+.chatbox {
+    border-color: #63bf76dd;
+}
+
+.border-green {
+    border-color: #63bf76dd;
+}
+.background-green {
+    background-color: #63bf76dd;
+}

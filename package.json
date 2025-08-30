@@ -14,7 +14,9 @@
     "google-maps-react": "^2.0.6",
     "next": "15.5.2",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "recorder-js": "^1.0.7",
+    "typefxjs": "^0.0.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -22,6 +24,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/recorder-js": "^1.0.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
