@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 // Mock data for demo
 const mockRoutes = [
@@ -23,7 +23,9 @@ const mockRoutes = [
         walkTime: "Start",
         walkDistance: "0m",
         totalTime: "0 min",
-        story: "In 1917, this station became the epicenter of Australia's largest general strike. Over 100,000 workers walked off the job, paralyzing the city for weeks."
+        story: "In 1917, this station became the epicenter of Australia's largest general strike. Over 100,000 workers walked off the job, paralyzing the city for weeks.",
+        vrImageUrl: null,
+        year: "1917"
       },
       {
         id: 2,
@@ -33,7 +35,10 @@ const mockRoutes = [
         walkTime: "6 min",
         walkDistance: "450m",
         totalTime: "11 min",
-        story: "Behind these brick walls, tramway workers planned the strikes that would change Sydney's labor laws forever. The depot's hidden basement served as a makeshift union hall."
+        story: "Behind these brick walls, tramway workers planned the strikes that would change Sydney's labor laws forever. The depot's hidden basement served as a makeshift union hall.",
+        audioUrl: null,
+        vrImageUrl: null,
+        year: "1920s"
       },
       {
         id: 3,
@@ -79,6 +84,79 @@ const mockRoutes = [
   },
   {
     id: 2,
+    title: "Urban Green Trail",
+    summary: "Explore hidden pockets of nature and sustainability woven through the city",
+    distance: "2.7 km", 
+    duration: "50 min",
+    stops: 6,
+    theme: "Green Spaces",
+    era: "1970s-Present",
+    difficulty: "Easy",
+    stops_detail: [
+      {
+        id: 1,
+        order: 1,
+        name: "Forgotten Creek Daylight",
+        teaser: "Where an ancient waterway was brought back from the pipes",
+        walkTime: "Start",
+        walkDistance: "0m",
+        totalTime: "0 min",
+        story: "This creek flowed here for thousands of years before being buried under concrete in 1923. In 2019, community activists convinced the council to 'daylight' it again, creating this small urban oasis where native fish have returned."
+      },
+      {
+        id: 2,
+        order: 2,
+        name: "The Guerrilla Garden",
+        teaser: "A vacant lot transformed by neighborhood rebels",
+        walkTime: "7 min",
+        walkDistance: "520m",
+        totalTime: "12 min",
+        story: "Started illegally in 2015 when residents got tired of looking at this empty lot. They planted vegetables at night, installed rain collection barrels, and created Sydney's first 'guerrilla garden.' The council tried to remove it twice before officially adopting it."
+      },
+      {
+        id: 3,
+        order: 3,
+        name: "Living Machine Rain Garden",
+        teaser: "Where storm water becomes clean water naturally",
+        walkTime: "6 min",
+        walkDistance: "430m",
+        totalTime: "23 min",
+        story: "This engineered wetland treats 2 million liters of street runoff each year using only plants and beneficial bacteria. The curved design mimics natural creek bends, and the native sedges can remove 85% of urban pollutants."
+      },
+      {
+        id: 4,
+        order: 4,
+        name: "Rooftop Forest",
+        teaser: "A secret garden floating above the street",
+        walkTime: "8 min",
+        walkDistance: "580m",
+        totalTime: "36 min",
+        story: "This office building's rooftop supports a micro-forest with over 200 native plants. It absorbs 15 tonnes of CO2 annually and provides habitat for 30+ bird species. The building's energy costs dropped 30% after installation."
+      },
+      {
+        id: 5,
+        order: 5,
+        name: "The Survivor Tree",
+        teaser: "A 300-year-old fig that refused to be developed",
+        walkTime: "5 min",
+        walkDistance: "380m",
+        totalTime: "46 min",
+        story: "When developers wanted to remove this massive Moreton Bay Fig in 1988, local residents chained themselves to its trunk for 3 weeks. The tree won. Its root system now anchors a small park, and its canopy covers half a city block."
+      },
+      {
+        id: 6,
+        order: 6,
+        name: "Pocket Food Forest",
+        teaser: "Where commuters harvest free lunch",
+        walkTime: "4 min",
+        walkDistance: "290m",
+        totalTime: "50 min",
+        story: "This narrow strip between buildings was transformed into a public food forest with fruit trees, herb spirals, and edible flowers. Office workers regularly harvest ingredients for lunch, and the space produces 200kg of free food annually."
+      }
+    ]
+  },
+  {
+    id: 3,
     title: "Forgotten Women's Stories",
     summary: "Uncover the pioneering women who shaped Sydney's history",
     distance: "1.8 km", 
@@ -141,7 +219,7 @@ const mockRoutes = [
     ]
   },
   {
-    id: 3,
+    id: 4,
     title: "Lost Architecture Trail",
     summary: "Walk through Sydney's vanished buildings and forgotten skylines", 
     distance: "3.1 km",
@@ -228,21 +306,57 @@ const mockRoutes = [
 export default function StorylinesPage() {
   const [selectedRoute, setSelectedRoute] = useState<any>(null)
   const [selectedStop, setSelectedStop] = useState<any>(null)
+  const [isNarrating, setIsNarrating] = useState(false)
+  const [showVRViewer, setShowVRViewer] = useState(false)
+  const audioRef = useRef<HTMLAudioElement>(null)
+
+  // Text-to-speech narration
+  const handleNarrate = (text: string) => {
+    if (isNarrating) {
+      speechSynthesis.cancel()
+      setIsNarrating(false)
+      return
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.rate = 0.8
+    utterance.pitch = 1
+    utterance.volume = 0.8
+    
+    utterance.onstart = () => setIsNarrating(true)
+    utterance.onend = () => setIsNarrating(false)
+    utterance.onerror = () => setIsNarrating(false)
+    
+    speechSynthesis.speak(utterance)
+  }
+
+  // Play pre-recorded audio if available
+  const playAudio = (audioUrl: string) => {
+    if (audioRef.current) {
+      audioRef.current.src = audioUrl
+      audioRef.current.play()
+    }
+  }
+
+  // Open VR viewer
+  const openVRViewer = () => {
+    setShowVRViewer(true)
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-16">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
-        <div className="container mx-auto px-4 py-16">
-          <h1 className="text-4xl font-bold mb-4">Forgotten Sydney Stories</h1>
-          <p className="text-xl mb-6 opacity-90">
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-2xl md:text-4xl font-bold mb-3">Forgotten Sydney Stories</h1>
+          <p className="text-sm md:text-xl mb-4 opacity-90">
             Discover the hidden histories beneath your feet. Walk curated routes through Sydney's forgotten stories, from demolished buildings to lost communities.
           </p>
-          <div className="flex space-x-4 text-sm">
-            <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+          <div className="flex space-x-2 text-xs">
+            <span className="bg-white bg-opacity-20 px-2 py-1 rounded-full">
               {mockRoutes.length} Routes Available
             </span>
-            <span className="bg-white bg-opacity-20 px-3 py-1 rounded-full">
+            <span className="bg-white bg-opacity-20 px-2 py-1 rounded-full">
               {mockRoutes.reduce((sum, route) => sum + route.stops, 0)} Story Points
             </span>
           </div>
@@ -251,39 +365,37 @@ export default function StorylinesPage() {
 
       {/* Routes Grid */}
       {!selectedRoute && (
-        <div className="container mx-auto px-4 py-12">
-          <h2 className="text-2xl font-bold mb-8">Choose Your Story Route</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="container mx-auto px-4 py-8">
+          <h2 className="text-xl md:text-2xl font-bold mb-6">Choose Your Story Route</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {mockRoutes.map((route) => (
               <div
                 key={route.id}
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
                 onClick={() => setSelectedRoute(route)}
               >
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold mb-2">{route.title}</h3>
-                      <p className="text-gray-600 text-sm mb-4">{route.summary}</p>
-                    </div>
+                <div className="p-4">
+                  <div className="mb-3">
+                    <h3 className="text-lg md:text-xl font-semibold mb-2">{route.title}</h3>
+                    <p className="text-gray-600 text-xs md:text-sm mb-3">{route.summary}</p>
                   </div>
                   
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between text-sm">
+                  <div className="space-y-1 mb-3">
+                    <div className="flex justify-between text-xs">
                       <span className="text-gray-500">Distance:</span>
                       <span className="font-medium">{route.distance}</span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    <div className="flex justify-between text-xs">
                       <span className="text-gray-500">Duration:</span>
                       <span className="font-medium">{route.duration}</span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    <div className="flex justify-between text-xs">
                       <span className="text-gray-500">Stops:</span>
                       <span className="font-medium">{route.stops} locations</span>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="flex flex-wrap gap-1 mb-3">
                     <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
                       {route.theme}
                     </span>
@@ -295,7 +407,7 @@ export default function StorylinesPage() {
                     </span>
                   </div>
 
-                  <button className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors">
+                  <button className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
                     Explore Route
                   </button>
                 </div>
@@ -320,62 +432,62 @@ export default function StorylinesPage() {
           </button>
 
           {/* Route Header */}
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h1 className="text-3xl font-bold mb-2">{selectedRoute.title}</h1>
-            <p className="text-gray-600 mb-4">{selectedRoute.summary}</p>
+          <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+            <h1 className="text-xl md:text-3xl font-bold mb-2">{selectedRoute.title}</h1>
+            <p className="text-gray-600 mb-3 text-sm md:text-base">{selectedRoute.summary}</p>
             
-            <div className="flex flex-wrap gap-4 mb-6">
-              <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap gap-2 mb-4">
+              <div className="flex items-center space-x-1 text-xs">
                 <span className="text-gray-500">📍</span>
                 <span>{selectedRoute.distance}</span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 text-xs">
                 <span className="text-gray-500">⏱️</span>
                 <span>{selectedRoute.duration}</span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-1 text-xs">
                 <span className="text-gray-500">🎯</span>
                 <span>{selectedRoute.stops} stops</span>
               </div>
             </div>
 
-            <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+            <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
               Start Route
             </button>
           </div>
 
           {/* Timeline of Stops */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold mb-6">Route Timeline</h2>
+          <div className="bg-white rounded-lg shadow-md p-4">
+            <h2 className="text-lg md:text-2xl font-bold mb-4">Route Timeline</h2>
             
             <div className="relative">
               {/* Vertical line */}
-              <div className="absolute left-8 top-4 bottom-4 w-0.5 bg-gray-300"></div>
+              <div className="absolute left-6 top-4 bottom-4 w-0.5 bg-gray-300"></div>
               
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {selectedRoute.stops_detail.map((stop: any, index: number) => (
-                  <div key={stop.id} className="flex items-start space-x-4">
+                  <div key={stop.id} className="flex items-start space-x-3">
                     {/* Stop number circle */}
-                    <div className="flex-shrink-0 w-16 h-16 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-lg relative z-10">
+                    <div className="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-sm relative z-10">
                       {stop.order}
                     </div>
                     
                     {/* Stop content */}
-                    <div className="flex-grow bg-gray-50 rounded-lg p-4">
+                    <div className="flex-grow bg-gray-50 rounded-lg p-3">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-lg font-semibold">{stop.name}</h3>
-                        <div className="text-right text-sm text-gray-500">
+                        <h3 className="text-sm md:text-lg font-semibold">{stop.name}</h3>
+                        <div className="text-right text-xs text-gray-500">
                           <div>{stop.walkTime}</div>
                           <div>{stop.walkDistance}</div>
                           <div className="font-medium">Total: {stop.totalTime}</div>
                         </div>
                       </div>
                       
-                      <p className="text-gray-600 mb-3 italic">{stop.teaser}</p>
+                      <p className="text-gray-600 mb-2 italic text-xs">{stop.teaser}</p>
                       
                       <button
                         onClick={() => setSelectedStop(stop)}
-                        className="text-green-600 hover:text-green-700 font-medium"
+                        className="text-green-600 hover:text-green-700 font-medium text-xs"
                       >
                         Read Full Story →
                       </button>
@@ -388,36 +500,74 @@ export default function StorylinesPage() {
         </div>
       )}
 
-      {/* Story Detail Modal */}
+      {/* Story Detail Modal with Immersive Features */}
       {selectedStop && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2">
+          <div className="bg-white rounded-lg max-w-lg w-full max-h-[85vh] overflow-y-auto">
+            <div className="p-4">
+              <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h2 className="text-2xl font-bold mb-1">{selectedStop.name}</h2>
-                  <p className="text-green-600 italic">{selectedStop.teaser}</p>
+                  <h2 className="text-lg md:text-2xl font-bold mb-1">{selectedStop.name}</h2>
+                  <p className="text-green-600 italic text-sm">{selectedStop.teaser}</p>
                 </div>
                 <button
-                  onClick={() => setSelectedStop(null)}
-                  className="text-gray-400 hover:text-gray-600 text-xl"
+                  onClick={() => {
+                    setSelectedStop(null)
+                    speechSynthesis.cancel()
+                    setIsNarrating(false)
+                    setShowVRViewer(false)
+                  }}
+                  className="text-gray-400 hover:text-gray-600 text-lg"
                 >
                   ✕
                 </button>
               </div>
               
-              <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed">
+              <div className="mb-4">
+                <p className="text-gray-700 leading-relaxed text-sm">
                   {selectedStop.story}
                 </p>
               </div>
+
+              {/* Immersive Experience Controls */}
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg mb-4">
+                <h3 className="font-semibold text-gray-800 mb-2 text-sm">Immersive Experience</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {/* Audio Narration */}
+                  <button
+                    onClick={() => handleNarrate(selectedStop.story)}
+                    className={`flex items-center justify-center space-x-2 px-3 py-2 rounded-lg transition-colors text-xs ${
+                      isNarrating 
+                        ? 'bg-red-500 hover:bg-red-600 text-white' 
+                        : 'bg-blue-500 hover:bg-blue-600 text-white'
+                    }`}
+                  >
+                    <span className="text-sm">
+                      {isNarrating ? '⏹️' : '🔊'}
+                    </span>
+                    <span className="font-medium">
+                      {isNarrating ? 'Stop Narration' : 'Play Narration'}
+                    </span>
+                  </button>
+
+                  {/* VR/360° Viewer */}
+                  <button
+                    onClick={openVRViewer}
+                    className="flex items-center justify-center space-x-2 bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg transition-colors text-xs"
+                  >
+                    <span className="text-sm">🕶️</span>
+                    <span className="font-medium">View in 360°</span>
+                  </button>
+                </div>
+              </div>
               
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="flex justify-between items-center">
-                  <button className="text-green-600 hover:text-green-700">
+              <div className="pt-3 border-t border-gray-200">
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <button className="text-green-600 hover:text-green-700 text-sm flex-1 py-2">
                     📍 Get Directions
                   </button>
-                  <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                  <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm flex-1">
                     Mark as Visited
                   </button>
                 </div>
@@ -426,6 +576,50 @@ export default function StorylinesPage() {
           </div>
         </div>
       )}
+
+      {/* VR/360° Viewer Modal */}
+      {showVRViewer && selectedStop && (
+        <div className="fixed inset-0 bg-black z-60 flex items-center justify-center">
+          <div className="w-full h-full relative">
+            {/* Close VR Button */}
+            <button
+              onClick={() => setShowVRViewer(false)}
+              className="absolute top-4 right-4 z-70 bg-white bg-opacity-20 text-white px-4 py-2 rounded-lg hover:bg-opacity-30 transition-colors"
+            >
+              Exit 360° View
+            </button>
+            
+            {/* VR Content */}
+            <div className="w-full h-full flex items-center justify-center">
+              {selectedStop.vrImageUrl ? (
+                <div className="w-full h-full relative overflow-hidden">
+                  <img 
+                    src={selectedStop.vrImageUrl}
+                    alt="360° Historical View"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-4 left-4 bg-black bg-opacity-50 text-white p-4 rounded-lg">
+                    <h3 className="font-bold">{selectedStop.name}</h3>
+                    <p className="text-sm">{selectedStop.teaser}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center text-white p-8">
+                  <div className="text-6xl mb-4">🏗️</div>
+                  <h3 className="text-2xl font-bold mb-2">Coming Soon</h3>
+                  <p className="text-gray-300">360° historical recreation for {selectedStop.name} is being developed.</p>
+                  <p className="text-sm text-gray-400 mt-4">
+                    Imagine standing here in {selectedStop.year || 'the past'}, experiencing this location as it once was.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hidden Audio Element */}
+      <audio ref={audioRef} className="hidden" />
     </div>
   )
 }
