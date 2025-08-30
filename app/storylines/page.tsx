@@ -99,7 +99,7 @@ const mockRoutes = [
     id: 2,
     title: "Urban Green Trail",
     summary: "Explore hidden pockets of nature and sustainability woven through the city",
-    distance: "2.7 km", 
+    distance: "2.7 km",
     duration: "50 min",
     stops: 6,
     theme: "Green Spaces",
@@ -172,7 +172,7 @@ const mockRoutes = [
     id: 3,
     title: "Forgotten Women's Stories",
     summary: "Uncover the pioneering women who shaped Sydney's history",
-    distance: "1.8 km", 
+    distance: "1.8 km",
     duration: "45 min",
     stops: 5,
     theme: "Women's History",
@@ -234,12 +234,12 @@ const mockRoutes = [
   {
     id: 4,
     title: "Lost Architecture Trail",
-    summary: "Walk through Sydney's vanished buildings and forgotten skylines", 
+    summary: "Walk through Sydney's vanished buildings and forgotten skylines",
     distance: "3.1 km",
     duration: "75 min",
     stops: 7,
     theme: "Architecture",
-    era: "1850s-1960s", 
+    era: "1850s-1960s",
     difficulty: "Moderate",
     stops_detail: [
       {
@@ -248,7 +248,7 @@ const mockRoutes = [
         name: "Grand Central Hotel (demolished 1971)",
         teaser: "Sydney's lost architectural gem",
         walkTime: "Start",
-        walkDistance: "0m", 
+        walkDistance: "0m",
         totalTime: "0 min",
         story: "Once stood here was a magnificent 6-story hotel with ornate Victorian facade. Demolished for a parking lot, it represented the architectural vandalism of the 1970s."
       },
@@ -259,7 +259,7 @@ const mockRoutes = [
         teaser: "Where iron and glass created Sydney's first mall",
         walkTime: "8 min",
         walkDistance: "600m",
-        totalTime: "13 min", 
+        totalTime: "13 min",
         story: "Built in 1869, these cast-iron and glass pavilions were Sydney's answer to London's Crystal Palace. The delicate ironwork was sold for scrap in 1960."
       },
       {
@@ -276,7 +276,7 @@ const mockRoutes = [
         id: 4,
         order: 4,
         name: "Old Government House Stables",
-        teaser: "Colonial grandeur in everyday buildings", 
+        teaser: "Colonial grandeur in everyday buildings",
         walkTime: "12 min",
         walkDistance: "850m",
         totalTime: "40 min",
@@ -287,7 +287,7 @@ const mockRoutes = [
         order: 5,
         name: "The Demolished Synagogue",
         teaser: "Moorish architecture in colonial Sydney",
-        walkTime: "9 min", 
+        walkTime: "9 min",
         walkDistance: "680m",
         totalTime: "54 min",
         story: "Built in 1878 with horseshoe arches and geometric tiles, this synagogue brought Middle Eastern architectural style to Sydney, decades before it became fashionable."
@@ -298,13 +298,13 @@ const mockRoutes = [
         name: "Lost Terrace Houses of Bent Street",
         teaser: "When entire streets vanished overnight",
         walkTime: "6 min",
-        walkDistance: "450m", 
+        walkDistance: "450m",
         totalTime: "65 min",
         story: "An entire street of 1880s terrace houses with iron lacework balconies was demolished in 1962 for urban renewal. Only photographs remain."
       },
       {
         id: 7,
-        order: 7, 
+        order: 7,
         name: "The Old Customs House Tower",
         teaser: "Sydney's first attempt at a skyscraper",
         walkTime: "10 min",
@@ -407,11 +407,11 @@ export default function StorylinesPage() {
     utterance.rate = 0.8
     utterance.pitch = 1
     utterance.volume = 0.8
-    
+
     utterance.onstart = () => setIsNarrating(true)
     utterance.onend = () => setIsNarrating(false)
     utterance.onerror = () => setIsNarrating(false)
-    
+
     speechSynthesis.speak(utterance)
   }
 
@@ -421,29 +421,37 @@ export default function StorylinesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16">
+    <div className="h-screen">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-2xl md:text-4xl font-bold mb-3">Forgotten Sydney Stories</h1>
-          <p className="text-sm md:text-xl mb-4 opacity-90">
-            Discover the hidden histories beneath your feet. Walk curated routes through Sydney's forgotten stories, from demolished buildings to lost communities.
-          </p>
-          <div className="flex space-x-2 text-xs">
-            <span className="bg-white bg-opacity-20 px-2 py-1 rounded-full">
-              {mockRoutes.length} Routes Available
-            </span>
-            <span className="bg-white bg-opacity-20 px-2 py-1 rounded-full">
-              {mockRoutes.reduce((sum, route) => sum + route.stops, 0)} Story Points
-            </span>
-          </div>
+      <div className="container mx-auto px-5 pt-16 bg-gradient-to-b from-emerald-900/70 to-transparent">
+        <h1 className="reveal text-4xl font-semibold my-6"
+          style={{ ["--delay" as any]: "0ms" }}>Forgotten Sydney Stories</h1>
+        <p className="reveal text mb-1 opacity-90 max-w-3xl"
+          style={{ ["--delay" as any]: "70ms" }}>
+          Discover the hidden histories beneath your feet. Walk curated routes through Sydney's forgotten stories, from demolished buildings to lost communities.
+        </p>
+
+        <div className="flex flex-col items-center">
+          <button
+            className="reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+            style={{ ["--delay" as any]: "100ms" }}
+          >
+            {mockRoutes.reduce((sum, route) => sum + route.stops, 0)} Story Points
+          </button>
+
+          <button
+            className="w-fit reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+            style={{ ["--delay" as any]: "200ms" }}
+          >
+            {mockRoutes.length} Routes Available
+          </button>
         </div>
       </div>
 
       {/* Routes Grid */}
       {!selectedRoute && (
-        <div className="container mx-auto px-4 py-8">
-          <h2 className="text-xl md:text-2xl font-bold mb-6">Choose Your Story Route</h2>
+        <div className="container mx-auto px-4 pt-16">
+          <h2 className="text-3xl font-bold mb-6">Choose Your Story Route</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {mockRoutes.map((route) => (
               <div
@@ -453,22 +461,22 @@ export default function StorylinesPage() {
               >
                 <div className="p-4">
                   <div className="mb-3">
-                    <h3 className="text-lg md:text-xl font-semibold mb-2">{route.title}</h3>
-                    <p className="text-gray-600 text-xs md:text-sm mb-3">{route.summary}</p>
+                    <h3 className="text-black text-lg md:text-xl font-semibold mb-2">{route.title}</h3>
+                    <p className="text-black text-xs md:text-sm mb-3">{route.summary}</p>
                   </div>
-                  
+
                   <div className="space-y-1 mb-3">
                     <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Distance:</span>
-                      <span className="font-medium">{route.distance}</span>
+                      <span className="text-black">Distance:</span>
+                      <span className="text-black font-medium">{route.distance}</span>
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Duration:</span>
-                      <span className="font-medium">{route.duration}</span>
+                      <span className="text-black">Duration:</span>
+                      <span className="text-black font-medium">{route.duration}</span>
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Stops:</span>
-                      <span className="font-medium">{route.stops} locations</span>
+                      <span className="text-black">Stops:</span>
+                      <span className="text-black font-medium">{route.stops} locations</span>
                     </div>
                   </div>
 
@@ -509,22 +517,22 @@ export default function StorylinesPage() {
           </button>
 
           {/* Route Header */}
-          <div className="bg-white rounded-lg shadow-md p-4 mb-4">
-            <h1 className="text-xl md:text-3xl font-bold mb-2">{selectedRoute.title}</h1>
-            <p className="text-gray-600 mb-3 text-sm md:text-base">{selectedRoute.summary}</p>
-            
+          <div className="bg-white/90 rounded-lg shadow-md p-4 mb-4">
+            <h1 className="text-black text-xl md:text-3xl font-bold mb-2">{selectedRoute.title}</h1>
+            <p className="text-black mb-3 text-sm md:text-base">{selectedRoute.summary}</p>
+
             <div className="flex flex-wrap gap-2 mb-4">
               <div className="flex items-center space-x-1 text-xs">
-                <span className="text-gray-500">📍</span>
-                <span>{selectedRoute.distance}</span>
+                <span className="text-black">📍</span>
+                <span className='text-black'>{selectedRoute.distance}</span>
               </div>
               <div className="flex items-center space-x-1 text-xs">
-                <span className="text-gray-500">⏱️</span>
-                <span>{selectedRoute.duration}</span>
+                <span className="text-black">⏱️</span>
+                <span className='text-black'>{selectedRoute.duration}</span>
               </div>
               <div className="flex items-center space-x-1 text-xs">
-                <span className="text-gray-500">🎯</span>
-                <span>{selectedRoute.stops} stops</span>
+                <span className="text-black">🎯</span>
+                <span className='text-black'>{selectedRoute.stops} stops</span>
               </div>
             </div>
 
@@ -535,12 +543,12 @@ export default function StorylinesPage() {
 
           {/* Timeline of Stops */}
           <div className="bg-white rounded-lg shadow-md p-4">
-            <h2 className="text-lg md:text-2xl font-bold mb-4">Route Timeline</h2>
-            
+            <h2 className="text-black text-lg md:text-2xl font-bold mb-4">Route Timeline</h2>
+
             <div className="relative">
               {/* Vertical line */}
               <div className="absolute left-6 top-4 bottom-4 w-0.5 bg-gray-300"></div>
-              
+
               <div className="space-y-4">
                 {selectedRoute.stops_detail.map((stop: any, index: number) => (
                   <div key={stop.id} className="flex items-start space-x-3">
@@ -548,20 +556,20 @@ export default function StorylinesPage() {
                     <div className="flex-shrink-0 w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold text-sm relative z-10">
                       {stop.order}
                     </div>
-                    
+
                     {/* Stop content */}
                     <div className="flex-grow bg-gray-50 rounded-lg p-3">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-sm md:text-lg font-semibold">{stop.name}</h3>
-                        <div className="text-right text-xs text-gray-500">
-                          <div>{stop.walkTime}</div>
-                          <div>{stop.walkDistance}</div>
-                          <div className="font-medium">Total: {stop.totalTime}</div>
+                        <h3 className="text-black text-sm md:text-lg font-semibold">{stop.name}</h3>
+                        <div className="text-black text-right text-xs">
+                          <div className='text-black'>{stop.walkTime}</div>
+                          <div className='text-black'>{stop.walkDistance}</div>
+                          <div className="text-black font-medium">Total: {stop.totalTime}</div>
                         </div>
                       </div>
-                      
+
                       <p className="text-gray-600 mb-2 italic text-xs">{stop.teaser}</p>
-                      
+
                       <button
                         onClick={() => setSelectedStop(stop)}
                         className="text-green-600 hover:text-green-700 font-medium text-xs"
@@ -599,7 +607,7 @@ export default function StorylinesPage() {
                   ✕
                 </button>
               </div>
-              
+
               <div className="mb-4">
                 <p className="text-gray-700 leading-relaxed text-sm">
                   {selectedStop.story}
@@ -609,16 +617,15 @@ export default function StorylinesPage() {
               {/* Immersive Experience Controls */}
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg mb-4">
                 <h3 className="font-semibold text-gray-800 mb-2 text-sm">Immersive Experience</h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {/* Audio Narration */}
                   <button
                     onClick={() => handleNarrate(selectedStop.story)}
-                    className={`flex items-center justify-center space-x-2 px-3 py-2 rounded-lg transition-colors text-xs ${
-                      isNarrating 
-                        ? 'bg-red-500 hover:bg-red-600 text-white' 
-                        : 'bg-blue-500 hover:bg-blue-600 text-white'
-                    }`}
+                    className={`flex items-center justify-center space-x-2 px-3 py-2 rounded-lg transition-colors text-xs ${isNarrating
+                      ? 'bg-red-500 hover:bg-red-600 text-white'
+                      : 'bg-blue-500 hover:bg-blue-600 text-white'
+                      }`}
                   >
                     <span className="text-sm">
                       {isNarrating ? '⏹️' : '🔊'}
@@ -638,7 +645,7 @@ export default function StorylinesPage() {
                   </button>
                 </div>
               </div>
-              
+
               <div className="pt-3 border-t border-gray-200">
                 <div className="flex flex-col sm:flex-row gap-2">
                   <button className="text-green-600 hover:text-green-700 text-sm flex-1 py-2">
@@ -663,7 +670,7 @@ export default function StorylinesPage() {
               onClick={() => {
                 setShowVRViewer(false)
                 // Go back one history entry if we pushed one when opening
-                try { history.back() } catch {}
+                try { history.back() } catch { }
               }}
               className="pointer-events-auto bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-colors"
             >

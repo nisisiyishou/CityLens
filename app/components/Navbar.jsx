@@ -11,9 +11,9 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="absolute top-0 left-0 right-0 bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg z-50">
+    <nav className="backdrop-blur-xs absolute top-0 left-0 right-0 bg-gradient-to-r from-gray-800/50 to-gray-900/20 shadow-lg z-50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-13">
           {/* Hamburger menu button - top left */}
           <div>
             <button
@@ -23,7 +23,7 @@ const Navbar = () => {
             >
               <span className="sr-only">Open menu</span>
               {/* Three white lines */}
-              <div className="w-6 flex flex-col space-y-1.5">
+              <div className="w-5 flex flex-col space-y-1">
                 <div className={`h-0.5 bg-white transition-all duration-300 ${
                   isMenuOpen ? 'rotate-45 translate-y-2' : ''
                 }`}></div>
@@ -37,9 +37,9 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Title on the right or keep empty */}
+          {/* Title on the right*/}
           <div className="flex-shrink-0">
-            <span className="text-xl font-semibold text-white">Grand Key Club</span>
+            <span className="text-xl font-semibold text-white">City Lens</span>
           </div>
         </div>
 
