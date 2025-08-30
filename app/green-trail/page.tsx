@@ -511,15 +511,15 @@ export default function GreenTrailPage() {
             <div className="flex flex-wrap gap-4 mb-6">
               <div className="flex items-center space-x-2">
                 <span>📍</span>
-                <span>{selectedRoute.distance}</span>
+                <span className="text-green-700">{selectedRoute.distance}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <span>⏱️</span>
-                <span>{selectedRoute.duration}</span>
+                <span className="text-green-700">{selectedRoute.duration}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <span>🌱</span>
-                <span>{selectedRoute.stops} stops</span>
+                <span className="text-green-700">{selectedRoute.stops} stops</span>
               </div>
             </div>
 
@@ -560,7 +560,7 @@ export default function GreenTrailPage() {
                             Impact: {stop.impact}
                           </p>
                         </div>
-                        <div className="text-right text-sm text-white">
+                        <div className="text-right text-sm text-green-700">
                           <div>{stop.walkTime}</div>
                           <div>{stop.walkDistance}</div>
                           <div className="font-medium">Total: {stop.totalTime}</div>
