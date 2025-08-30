@@ -69,27 +69,31 @@ export default function Home() {
             {/* 42 */}
             <section className="flex flex-col items-center absolute left-0 right-0 px-6" style={{ top: "35%" }}>
 
-                <p className="mt-3 text-xs tracking-widest uppercase opacity-80">30/08/2025</p>
+                <p className="reveal mt-3 text-xs tracking-widest uppercase opacity-80"
+                    style={{ ["--delay" as any]: "0ms" }}
+                >30/08/2025</p>
 
-                <h1 className="mt-3 text-3xl">Sydney City Lens</h1>
+                <h1 className="reveal mt-3 text-3xl"
+                    style={{ ["--delay" as any]: "200ms" }}
+                >Sydney City Lens</h1>
 
                 <button
-                    className="display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
-                    aria-label="b"
+                    className="reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+                    style={{ ["--delay" as any]: "300ms" }}
                 >
                     Urban Green Trail
                 </button>
 
                 <button
-                    className="display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
-                    aria-label="b"
+                    className="reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+                    style={{ ["--delay" as any]: "400ms" }}
                 >
                     Forgotten Stories Line
                 </button>
 
                 <button
-                    className="display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
-                    aria-label="b"
+                    className="reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+                    style={{ ["--delay" as any]: "500ms" }}
                 >
                     Infractructure Path
                 </button>
@@ -98,7 +102,9 @@ export default function Home() {
             <footer className="absolute inset-x-0 bottom-0 overflow-hidden">
                 <div className="absolute -inset-x-6 bottom-0 top-0 bg-gradient-to-t from-emerald-950/80 via-emerald-900/40 to-transparent" />
 
-                <div className="relative px-6 pb-3">
+                <div className="reveal relative px-6 pb-3"
+                    style={{ ["--delay" as any]: "600ms" }}
+                >
                     <div className="mt-3 flex items-center justify-center gap-2">
                         <div style={{
                             "--zoom": 0.7,
