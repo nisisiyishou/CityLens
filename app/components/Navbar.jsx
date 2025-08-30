@@ -59,7 +59,7 @@ const Navbar = () => {
             {/* Menu items - row by row, no icons */}
             <div className="">
               <Link
-                href="/checkins"
+                href="/phone/comming-soon1"
                 className="block px-6 py-2.5 text-white hover:bg-gray-700 hover:text-green-400 border-b border-gray-700 transition-colors duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -67,7 +67,7 @@ const Navbar = () => {
               </Link>
 
               <Link
-                href="/collection"
+                href="/phone/comming-soon1"
                 className="block px-6 py-2.5 text-white hover:bg-gray-700 hover:text-green-400 border-b border-gray-700 transition-colors duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -75,7 +75,7 @@ const Navbar = () => {
               </Link>
 
               <Link
-                href="/missions"
+                href="/phone/comming-soon1"
                 className="block px-6 py-2.5 text-white hover:bg-gray-700 hover:text-green-400 border-b border-gray-700 transition-colors duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -83,7 +83,7 @@ const Navbar = () => {
               </Link>
 
               <Link
-                href="/settings"
+                href="/phone/comming-soon1"
                 className="block px-6 py-2.5 text-white hover:bg-gray-700 hover:text-green-400 border-b border-gray-700 transition-colors duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -108,7 +108,7 @@ const Navbar = () => {
       {/* Background overlay to close menu when clicking outside */}
       {isMenuOpen && (
         <div
-          className="fixed bg-black bg-opacity-30 z-20"
+          className="fixed inset bg-transparent z-20 w-screen h-screen"
           onClick={() => setIsMenuOpen(false)}
         ></div>
       )}

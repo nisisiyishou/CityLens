@@ -451,12 +451,14 @@ export default function StorylinesPage() {
       {/* Routes Grid */}
       {!selectedRoute && (
         <div className="container mx-auto px-4 pt-16">
-          <h2 className="text-3xl font-bold mb-6">Choose Your Story Route</h2>
+          <h2 className="reveal text-3xl font-bold mb-6"
+            style={{ ["--delay" as any]: "300ms" }}>Choose Your Story Route</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {mockRoutes.map((route) => (
               <div
                 key={route.id}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                className="reveal bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                style={{ ["--delay" as any]: "400ms" }}
                 onClick={() => setSelectedRoute(route)}
               >
                 <div className="p-4">
