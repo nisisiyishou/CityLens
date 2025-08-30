@@ -123,7 +123,7 @@ export default function AI() {
 
 
 
-            <div className="w-full absolute px-10 bottom-[21%]">
+            <div className="w-full fixed px-10 bottom-[21%]">
                 <InputWithVoice className="" doSend={doSend} />
             </div>
         </div>
