@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from 'react'
 
-type FacilityType = 'bin' | 'toilet' | 'water' | 'plug'
+type FacilityType = 'bin' | 'toilet' | 'water' | 'plug' | 'bench'
 
 type FacilityDetails = {
   venue?: string      // Restaurant/Mall/Station etc
@@ -193,11 +193,12 @@ const ROADS: Road[] = [
   }
 ]
 
-const TYPE_META: Record<FacilityType, { label: string; emoji: string; color: string }> = {
-  bin:    { label: 'Bin',           emoji: '🗑️', color: '#16a34a' },
-  toilet: { label: 'Toilet',        emoji: '🚻', color: '#2563eb' },
-  water:  { label: 'Water Station', emoji: '🚰', color: '#0891b2' },
-  plug:   { label: 'Power Plug',    emoji: '🔌', color: '#a855f7' },
+const TYPE_META: Record<FacilityType, { label: string; color: string }> = {
+  bin:    { label: 'Bin',           color: '#16a34a' },
+  toilet: { label: 'Toilet',        color: '#2563eb' },
+  water:  { label: 'Water Station', color: '#0891b2' },
+  plug:   { label: 'Power Plug',    color: '#a855f7' },
+  bench:  { label: 'Bench',         color: '#92400e' },
 }
 
 // Road styles
@@ -222,13 +223,12 @@ const ROAD_STYLES = {
   }
 }
 
+
 export default function InfrastructurePage() {
   // Filters
   const [filters, setFilters] = useState<Record<FacilityType, boolean>>({
-    bin: true, toilet: true, water: true, plug: true,
+    bin: true, toilet: true, water: true, plug: true, bench: true,
   })
-  const [onlyNearby, setOnlyNearby] = useState(true)
-  const [radius, setRadius] = useState<number>(350)
   
   // Fixed user location - doesn't change with clicks
   const [me] = useState<{ x: number; y: number }>({ x: 1000, y: 600 })
@@ -262,14 +262,8 @@ export default function InfrastructurePage() {
 
   // Calculate visible facilities
   const visibleFacilities = useMemo(() => {
-    return FACILITIES.filter(f => {
-      if (!filters[f.type]) return false
-      if (!onlyNearby) return true
-      const dx = f.x - me.x
-      const dy = f.y - me.y
-      return Math.hypot(dx, dy) <= radius
-    })
-  }, [filters, onlyNearby, radius, me])
+    return FACILITIES.filter(f => filters[f.type]);
+  }, [filters]);
 
   // Handle clicking on facilities only
   function handleFacilityClick(facility: Facility) {
@@ -285,62 +279,33 @@ export default function InfrastructurePage() {
       <div className="flex-shrink-0 bg-white border-b shadow-sm">
         <div className="px-4 py-3">
           {/* Title */}
-          <h1 className="text-2xl font-bold mb-3">City Infrastructure Map</h1>
+          <div className='px-4 py-6'></div>
+
           
           {/* First row: Facility type filters */}
           <div className="flex flex-wrap gap-2 mb-3">
-            {(Object.keys(TYPE_META) as FacilityType[]).map((t) => (
-              <label 
-                key={t} 
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors"
-              >
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 accent-green-600"
-                  checked={filters[t]}
-                  onChange={() => setFilters(s => ({ ...s, [t]: !s[t] }))}
-                />
-                <span className="text-sm font-medium" style={{ color: TYPE_META[t].color }}>
-                  {TYPE_META[t].emoji} {TYPE_META[t].label}
-                </span>
-              </label>
-            ))}
+            {(Object.keys(TYPE_META) as FacilityType[]).map((t) => {
+              const active = filters[t];
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setFilters(s => ({ ...s, [t]: !s[t] }))}
+                  className="relative flex items-center justify-center rounded-full w-10 h-10 shadow-sm transition-transform hover:scale-105"
+                  aria-label={TYPE_META[t].label}
+                  title={TYPE_META[t].label}
+                  style={{ 
+                    background: TYPE_META[t].color,
+                    opacity: active ? 1 : 0.35
+                  }}
+                >
+                  <img src={`/icons/${t}.svg`} alt="" className="w-5 h-5 pointer-events-none" />
+                  {active && <span className="absolute -top-1 -right-1 inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white" />}
+                </button>
+              );
+            })}
           </div>
           
-          {/* Second row: Controls and counter */}
-          <div className="flex flex-wrap items-center gap-3">
-            <label className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors">
-              <input
-                type="checkbox"
-                className="w-4 h-4 accent-emerald-600"
-                checked={onlyNearby}
-                onChange={() => setOnlyNearby(v => !v)}
-              />
-              <span className="text-sm font-medium">Only nearby</span>
-            </label>
-
-            {onlyNearby && (
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-lg">
-                <span className="text-sm font-medium text-emerald-700">Radius:</span>
-                <input
-                  type="range" 
-                  min={100} 
-                  max={800} 
-                  step={25}
-                  value={radius}
-                  onChange={e => setRadius(+e.target.value)}
-                  className="w-24"
-                />
-                <span className="text-sm font-bold text-emerald-700 w-12 text-right">{radius}m</span>
-              </div>
-            )}
-
-            <div className="ml-auto px-3 py-1.5 bg-blue-50 rounded-lg">
-              <span className="text-sm text-blue-700">
-                Showing <span className="font-bold">{visibleFacilities.length}</span> / {FACILITIES.length} facilities
-              </span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -349,83 +314,53 @@ export default function InfrastructurePage() {
         <div className="h-full p-4">
           {/* Map section - now takes full width */}
           <div className="bg-white rounded-xl shadow-lg p-3 flex flex-col h-full">
-            <svg
-              viewBox={`0 0 ${MAP_W} ${MAP_H}`}
-              className="flex-1 w-full rounded-lg"
-              style={{ minHeight: '400px', cursor: 'default' }}
-            >
-              {/* Background grid */}
-              <defs>
-                <pattern id="smallGrid" width="50" height="50" patternUnits="userSpaceOnUse">
-                  <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#e5e7eb" strokeWidth="1"/>
-                </pattern>
-                <pattern id="grid" width="250" height="250" patternUnits="userSpaceOnUse">
-                  <rect width="250" height="250" fill="url(#smallGrid)" />
-                  <path d="M 250 0 L 0 0 0 250" fill="none" stroke="#cbd5e1" strokeWidth="1.5"/>
-                </pattern>
-              </defs>
-              <rect x="0" y="0" width={MAP_W} height={MAP_H} fill="url(#grid)" />
+            <div className="relative w-full rounded-lg overflow-hidden" style={{ minHeight: '400px' }}>
+              {/* Maintain aspect ratio based on the original virtual map size */}
+              <div style={{ paddingBottom: `${(MAP_H / MAP_W) * 100}%` }} />
 
-              {/* Static roads layer - rendered first so they appear below everything */}
-              <g id="roads-layer">
-                {ROADS.map((road) => (
-                  <path
-                    key={road.id}
-                    d={road.points}
-                    fill="none"
-                    stroke={ROAD_STYLES[road.type].stroke}
-                    strokeWidth={ROAD_STYLES[road.type].strokeWidth}
-                    strokeDasharray={ROAD_STYLES[road.type].strokeDasharray}
-                    opacity={ROAD_STYLES[road.type].opacity}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+              {/* Background image */}
+              <img
+                src="/bg1.png"
+                alt="Map background"
+                className="absolute inset-0 w-full h-full object-contain bg-black"
+                style={{ cursor: 'default' }}
+              />
+
+              {/* Interactive overlay using the same coordinate system (MAP_W x MAP_H) */}
+              <svg
+                viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+                className="absolute inset-0 w-full h-full"
+                preserveAspectRatio="xMidYMid slice"
+              >
+                {/* Facility markers (clickable) */}
+                {visibleFacilities.map((f) => (
+                  <g
+                    key={f.id}
+                    transform={`translate(${f.x}, ${f.y})`}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleFacilityClick(f)}
+                  >
+                    {selected?.id === f.id && <circle r="28" fill="none" stroke="#111827" strokeWidth="4" />}
+                    <circle r="24" fill={TYPE_META[f.type].color} opacity={0.25} />
+                    <circle r="14" fill={TYPE_META[f.type].color} />
+                    <image x={20} y={-36} width={32} height={32} href={`/icons/${f.type}.svg`} />
+                    <text x={30} y={18} fontSize="26" fill="#334155" fontWeight="600">{f.name}</text>
+                  </g>
                 ))}
-              </g>
 
-              {/* Decorations */}
-              <ellipse cx="1550" cy="420" rx="200" ry="120" fill="#e0f2fe" />
-              <text x="1480" y="420" fontSize="36" fill="#1e40af" opacity="0.6" fontWeight="800">River</text>
-              <rect x="500" y="300" width="300" height="220" rx="28" fill="#dcfce7" />
-              <text x="600" y="410" fontSize="36" fill="#166534" opacity="0.6" fontWeight="800">City Park</text>
-              <rect x="900" y="520" width="200" height="140" rx="16" fill="#f1f5f9" />
-              <text x="950" y="590" fontSize="36" fill="#475569" opacity="0.6" fontWeight="800">Plaza</text>
-
-              {/* Radius circle */}
-              {onlyNearby && (
-                <circle cx={me.x} cy={me.y} r={radius} fill="rgba(16,185,129,0.08)" stroke="#10b981" strokeDasharray="6 6" />
-              )}
-
-              {/* Facility markers (clickable) */}
-              {visibleFacilities.map((f) => (
-                <g
-                  key={f.id}
-                  transform={`translate(${f.x}, ${f.y})`}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleFacilityClick(f)}
-                >
-                  {/* Highlight circle for selected */}
-                  {selected?.id === f.id && <circle r="28" fill="none" stroke="#111827" strokeWidth="4" />}
-                  <circle r="24" fill={TYPE_META[f.type].color} opacity={0.25} />
-                  <circle r="14" fill={TYPE_META[f.type].color} />
-                  <text x={20} y={-20} fontSize="48" fontWeight="700" fill="#111827">
-                    {TYPE_META[f.type].emoji}
-                  </text>
-                  <text x={30} y={18} fontSize="26" fill="#334155" fontWeight="600">{f.name}</text>
+                {/* User location marker (fixed) */}
+                <g transform={`translate(${me.x}, ${me.y})`} pointerEvents="none">
+                  <circle r="26" fill="#ef4444" opacity="0.3" />
+                  <circle r="20" fill="#dc2626" />
+                  <circle r="8" fill="white" />
+                  <text x={-20} y={-28} fontSize="42" fontWeight="700">📍</text>
+                  <text x={26} y={10} fontSize="28" fill="#111827" fontWeight="700">You are here</text>
                 </g>
-              ))}
 
-              {/* Fixed user location */}
-              <g transform={`translate(${me.x}, ${me.y})`} pointerEvents="none">
-                <circle r="26" fill="#ef4444" opacity="0.3" />
-                <circle r="20" fill="#dc2626" />
-                <circle r="8" fill="white" />
-                <text x={-20} y={-28} fontSize="42" fontWeight="700">📍</text>
-                <text x={26} y={10} fontSize="28" fill="#111827" fontWeight="700">You are here</text>
-              </g>
-
-              <rect x="1" y="1" width={MAP_W-2} height={MAP_H-2} fill="none" stroke="#94a3b8" />
-            </svg>
+                {/* Border */}
+                <rect x="1" y="1" width={MAP_W-2} height={MAP_H-2} fill="none" stroke="#94a3b8" />
+              </svg>
+            </div>
 
             <div className="px-2 py-2 text-sm text-gray-500 border-t mt-2">
               💡 Tip: Click facilities (especially 🚻) for details • Click outside modal to close • Press ESC to close
@@ -446,7 +381,9 @@ export default function InfrastructurePage() {
           >
             <div className="flex items-start justify-between gap-3 mb-3">
               <div>
-                <div className="text-3xl mb-1">{TYPE_META[selected.type].emoji}</div>
+                <div className="mb-1">
+                  <img src={`/icons/${selected.type}.svg`} alt={TYPE_META[selected.type].label} className="inline-block w-6 h-6" />
+                </div>
                 <h2 className="text-lg font-bold">{selected.name}</h2>
                 <div className="text-xs text-gray-500 mt-1">
                   Type: {TYPE_META[selected.type].label}
@@ -505,3 +442,4 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n))
 }
+
