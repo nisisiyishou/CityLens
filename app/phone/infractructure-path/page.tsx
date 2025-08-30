@@ -1,91 +1,213 @@
-import React from "react";
-import Image from "next/image";
+'use client'
 
+import { useState, useRef } from 'react'
+import { GoogleMap, Marker, useLoadScript } from '@react-google-maps/api'
 
-type InfraItem = {
-  key: string;
-  title: string;
-  iconSrc: string; // grayscale placeholder (data URL or local path)
-  examples: string;
-};
+type FacilityType = 'bin' | 'toilet' | 'water' | 'plug' | 'bench'
 
-const placeholderIcon =
-  'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="%23e5e7eb"/><stop offset="100%" stop-color="%23cbd5e1"/></linearGradient></defs><rect width="96" height="96" rx="16" fill="url(%23g)"/><circle cx="48" cy="40" r="16" fill="%23d1d5db"/><rect x="20" y="60" width="56" height="16" rx="8" fill="%23d1d5db"/></svg>';
-
-const infraTypes: InfraItem[] = [
-  { key: "infra_restroom", title: "Public Bathroom", iconSrc: placeholderIcon, examples: "Public restrooms" },
-  { key: "infra_charger", title: "Charger", iconSrc: placeholderIcon, examples: "Public charging" },
-  { key: "infra_bench", title: "Bench", iconSrc: placeholderIcon, examples: "Benches" },
-  { key: "infra_water", title: "Water Fountain", iconSrc: placeholderIcon, examples: "Water fountains" },
-];
-
-// Dummy icon components for demonstration
-function IconToilet() {
-  return <span role="img" aria-label="Toilet">🚽</span>;
+const TYPE_META: Record<FacilityType, { label: string; color: string }> = {
+  bin:    { label: 'Bin',           color: '#16a34a' },
+  toilet: { label: 'Toilet',        color: '#2563eb' },
+  water:  { label: 'Water Station', color: '#0891b2' },
+  plug:   { label: 'Power Plug',    color: '#a855f7' },
+  bench:  { label: 'Bench',         color: '#92400e' },
 }
-function IconCharger() {
-  return <span role="img" aria-label="Charger">🔌</span>;
-}
-function IconBench() {
-  return <span role="img" aria-label="Bench">🪑</span>;
-}
-function IconWater() {
-  return <span role="img" aria-label="Water">🚰</span>;
-}
-function CircleIcon({ label, children }: { label: string; children: React.ReactNode }) {
+
+export default function FacilityFilter() {
+  const [filters, setFilters] = useState<Record<FacilityType, boolean>>({
+    bin: false,
+    toilet: false,
+    water: false,
+    plug: false,
+    bench: false,
+  });
+
+const { isLoaded } = useLoadScript({
+  googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string,
+  language: 'en',
+  region: 'US',
+});
+
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const geocoderRef = useRef<google.maps.Geocoder | null>(null);
+
+  const [markers, setMarkers] = useState<{
+    type: FacilityType;
+    position: { lat: number; lng: number };
+  }[]>([]);
+
+  const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null);
+
+  const getRandomNearbyLatLng = (center: { lat: number; lng: number }, radiusMeters = 800) => {
+    const r = radiusMeters;
+    const u = Math.random();
+    const v = Math.random();
+    const w = r * Math.sqrt(u);
+    const t = 2 * Math.PI * v;
+    const dx = w * Math.cos(t);
+    const dy = w * Math.sin(t);
+    const dLat = dy / 111320;
+    const dLng = dx / (111320 * Math.cos(center.lat * Math.PI / 180));
+    return { lat: center.lat + dLat, lng: center.lng + dLng };
+  };
+
+  const getRandomLandNear = async (center: { lat: number; lng: number }, attempts = 8, radiusMeters = 800): Promise<{ lat: number; lng: number } | null> => {
+    const geocoder = geocoderRef.current;
+    if (!geocoder) return getRandomNearbyLatLng(center, radiusMeters);
+    for (let i = 0; i < attempts; i++) {
+      const loc = getRandomNearbyLatLng(center, radiusMeters);
+      const ok = await new Promise<boolean>((resolve) => {
+        geocoder.geocode({ location: loc }, (results, status) => {
+          resolve(status === 'OK' && !!results && results.length > 0);
+        });
+      });
+      if (ok) return loc;
+    }
+    return null;
+  };
+
+  const getRandomLandLatLng = async (attempts = 8): Promise<{ lat: number; lng: number } | null> => {
+    const g = (window as any).google as typeof google;
+    const map = mapRef.current;
+    const geocoder = geocoderRef.current;
+    if (!g || !map || !geocoder) return null;
+
+    const bounds = map.getBounds();
+    let sw: google.maps.LatLng, ne: google.maps.LatLng;
+    if (bounds) {
+      sw = bounds.getSouthWest();
+      ne = bounds.getNorthEast();
+    } else {
+      const c = map.getCenter();
+      if (!c) return null;
+      sw = new g.maps.LatLng(c.lat() - 0.05, c.lng() - 0.05);
+      ne = new g.maps.LatLng(c.lat() + 0.05, c.lng() + 0.05);
+    }
+
+    for (let i = 0; i < attempts; i++) {
+      const lat = sw.lat() + Math.random() * (ne.lat() - sw.lat());
+      const lng = sw.lng() + Math.random() * (ne.lng() - sw.lng());
+      const loc = { lat, lng };
+      const ok = await new Promise<boolean>((resolve) => {
+        geocoder.geocode({ location: loc }, (results, status) => {
+          resolve(status === 'OK' && !!results && results.length > 0);
+        });
+      });
+      if (ok) return loc;
+    }
+    return null;
+  };
+
+  const addRandomMarkers = async (type: FacilityType, count = 5) => {
+    const base = userPos;
+    const list: { type: FacilityType; position: { lat: number; lng: number } }[] = [];
+    if (base) {
+      for (let i = 0; i < count; i++) {
+        const loc = await getRandomLandNear(base);
+        if (loc) list.push({ type, position: loc });
+      }
+    } else {
+      for (let i = 0; i < count; i++) {
+        const loc = await getRandomLandLatLng();
+        if (loc) list.push({ type, position: loc });
+      }
+    }
+    if (list.length) setMarkers(prev => [...prev, ...list]);
+  };
+
+  const clearMarkers = (type: FacilityType) => {
+    setMarkers(prev => prev.filter(m => m.type !== type));
+  };
+
+  const defaultCenter = { lat: -33.8688, lng: 151.2093 }; // Sydney
+
   return (
-    <div
-      className="w-12 h-12 rounded-full flex items-center justify-center bg-white border border-slate-300 shadow hover:shadow-md transition"
-      title={label}
-      aria-label={label}
-    >
-      {children}
-    </div>
-  );
-}
-
-type NodeTypeCardProps = {
-  iconSrc: string;
-  title: string;
-  examples: string;
-};
-
-function NodeTypeCard({ iconSrc, title, examples }: NodeTypeCardProps) {
-  return (
-    <div className="aspect-square flex flex-col justify-center items-center rounded-2xl border border-slate-200 p-4 bg-white shadow-sm transition hover:shadow-md text-center">
-      <div className="mb-3">
-        <img src={iconSrc} alt="" className="w-16 h-16 rounded-lg object-cover grayscale" />
+    <div className="w-screen h-screen pt-16 flex flex-col">
+      <div className="flex flex-wrap gap-2 mb-3" style={{ marginLeft: '20px' }}>
+        {(Object.keys(TYPE_META) as FacilityType[]).map((t) => {
+          const active = filters[t];
+          return (
+            <button
+              key={t}
+              type="button"
+              onClick={() => {
+                setFilters(s => {
+                  const next = { ...s, [t]: !s[t] } as Record<FacilityType, boolean>;
+                  if (!s[t]) {
+                    addRandomMarkers(t, 5);
+                  } else {
+                    clearMarkers(t);
+                  }
+                  return next;
+                });
+              }}
+              className="relative flex items-center justify-center rounded-full w-10 h-10 shadow-sm transition-transform hover:scale-105"
+              aria-label={TYPE_META[t].label}
+              title={TYPE_META[t].label}
+              style={{
+                background: TYPE_META[t].color,
+                opacity: 1,
+              }}
+            >
+              <img src={`/icons/${t}.svg`} alt="" className="w-5 h-5 pointer-events-none" />
+              {active && (
+                <span className="absolute -top-1 -right-1 inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white" />
+              )}
+            </button>
+          );
+        })}
       </div>
-      <div className="font-medium">{title}</div>
-      <div className="text-sm text-slate-500 mt-1">{examples}</div>
-    </div>
-  );
-}
 
-export default function InfrastructurePathCard() {
-  return (
-    <div className="mt-20 relative h-screen overflow-hidden">
-      {/* Navigation bar */}
-      <nav className="flex justify-around items-center py-4 bg-white/80 backdrop-blur border-b border-slate-200">
-        <CircleIcon label="Toilet"><IconToilet /></CircleIcon>
-        <CircleIcon label="Charger"><IconCharger /></CircleIcon>
-        <CircleIcon label="Bench"><IconBench /></CircleIcon>
-        <CircleIcon label="Water"><IconWater /></CircleIcon>
-      </nav>
-
-      <div>
-        <div className="relative w-screen h-[calc(100vh-64px)]">
-          <Image
-            className="dark:invert w-full h-full object-cover"
-            src="/bg1.png"
-            alt="Next.js logo"
-            fill
-            priority
-          />
-        </div>
-
-      </div>
-
+      {isLoaded && (
+        <GoogleMap
+          mapContainerClassName="w-full overflow-hidden flex-grow"
+          center={userPos ?? defaultCenter}
+          zoom={12}
+          onLoad={(map) => {
+            mapRef.current = map;
+            geocoderRef.current = new google.maps.Geocoder();
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  const p = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                  setUserPos(p);
+                  map.panTo(p);
+                },
+                () => {},
+                { enableHighAccuracy: true, maximumAge: 10000, timeout: 10000 }
+              );
+            }
+          }}
+        >
+          {userPos && (
+            <Marker
+              position={userPos}
+              zIndex={Number.MAX_SAFE_INTEGER}
+              icon={{
+                url: "/icons/my-location.svg",
+                scaledSize: new google.maps.Size(36, 36),
+                anchor: new google.maps.Point(18, 18),
+              }}
+              options={{
+                optimized: false
+              }}
+            />
+          )}
+          {markers.map((m, i) => (
+            <Marker
+              key={`${m.type}-${i}-${m.position.lat.toFixed(5)}-${m.position.lng.toFixed(5)}`}
+              position={m.position}
+              icon={{
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: '#10B981',
+                fillOpacity: 1,
+                strokeWeight: 0,
+                scale: 6,
+              }}
+            />
+          ))}
+        </GoogleMap>
+      )}
     </div>
   );
 }
