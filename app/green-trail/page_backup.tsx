@@ -267,112 +267,101 @@ export default function GreenTrailPage() {
   const [selectedStop, setSelectedStop] = useState<any>(null)
 
   return (
-    <div className="h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 pt-16 bg-gradient-to-b from-emerald-900/70 to-transparent">
-        <h1 className="reveal text-4xl font-semibold mb-4 mt-4"
-          style={{ ["--delay" as any]: "0ms" }}>Sydney Green Trails</h1>
-        <p className="reveal text mb-1 opacity-90 max-w-3xl"
-          style={{ ["--delay" as any]: "70ms" }}>
-          Explore multiple green story routes through Sydney's urban landscape. From hidden waterways to native wildlife corridors, discover how nature and community activism are reshaping the city.
-        </p>
+      <div className="bg-gradient-to-r from-green-600 via-green-500 to-emerald-600 text-white">
+        <div className="container mx-auto px-4 py-16 flex">
+          <h1 className="text-4xl font-bold mb-4">Sydney Green Trails</h1>
+          <p className="text mb-6 opacity-90 max-w-3xl">
+            Explore multiple green story routes through Sydney's urban landscape. From hidden waterways to native wildlife corridors, discover how nature and community activism are reshaping the city.
+          </p>
 
-        <div className="flex flex-col items-center">
-          <button
-            className="reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
-            style={{ ["--delay" as any]: "100ms" }}
-          >
-            {greenTrailRoutes.reduce((sum, route) => sum + route.stops, 0)} Nature Points
-          </button>
+          <div className="flex flex-wrap gap-4 mb-6">
+            <button
+              className="reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+              style={{ ["--delay" as any]: "0ms" }}
+            >
+              {greenTrailRoutes.length} Green Routes
+            </button>
 
-          <button
-            className="w-fit reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
-            style={{ ["--delay" as any]: "200ms" }}
-          >
-            {greenTrailRoutes.length} Green Routes
-          </button>
+            <button
+              className="reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+              style={{ ["--delay" as any]: "100ms" }}
+            >
+              {greenTrailRoutes.reduce((sum, route) => sum + route.stops, 0)} Nature Points
+            </button>
 
-          <button
-            className="reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
-            style={{ ["--delay" as any]: "300ms" }}
-          >
-            Easy to Moderate
-          </button>
+            <button
+              className="reveal display-button mt-6 inline-flex justify-center items-center gap-2 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+              style={{ ["--delay" as any]: "200ms" }}
+            >
+              Easy to Moderate
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Routes Selection */}
       {!selectedRoute && (
-        <section className="container max-w-screen px-4 pt-16 pb-40">
-          <h2 className="text-3xl font-bold mb-6">Choose Your Green Adventure</h2>
+        <div className="container mx-auto px-4 py-12">
+          <h2 className="text-3xl font-bold mb-8">Choose Your Green Adventure</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {greenTrailRoutes.map((route) => (
+              <div
+                key={route.id}
+                className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
+                onClick={() => setSelectedRoute(route)}
+              >
+                <div className="p-6">
+                  <div className="mb-4">
+                    <h3 className="text-xl font-bold mb-2">{route.title}</h3>
+                    <p className="text-gray-600 text-sm mb-4">{route.summary}</p>
+                  </div>
 
-          <div className="relative overflow-visible">
-            <div
-              className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden gap-6"
-              aria-label="Routes carousel"
-              role="region"
-            >
-              {greenTrailRoutes.map((route) => (
-                <div
-                  key={route.id}
-                  className="snap-start shrink-0 w-[85%] sm:w-[70%] md:w-[55%] lg:w-[40%] xl:w-[32%]"
-                >
-                  <div
-                    className="bg-white/90 rounded-xl shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden h-full"
-                    onClick={() => setSelectedRoute(route)}
-                  >
-                    <div className="p-6">
-                      <div className="mb-4">
-                        <h3 className="text-black text-xl font-bold mb-2">{route.title}</h3>
-                        <p className="text-black text-sm mb-4">{route.summary}</p>
-                      </div>
-
-                      <div className="space-y-2 mb-4">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-black">Distance:</span>
-                          <span className="text-black font-medium">{route.distance}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-black">Duration:</span>
-                          <span className="text-black font-medium">{route.duration}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-black">Stops:</span>
-                          <span className="text-black font-medium">{route.stops} locations</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">
-                          {route.theme}
-                        </span>
-                        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">
-                          {route.era}
-                        </span>
-                        <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                          {route.difficulty}
-                        </span>
-                      </div>
-
-                      {/* {route.totalCO2Saved && (
-                        <div className="bg-green-50 p-3 rounded-lg mb-4">
-                          <div className="text-xs text-green-700 font-medium mb-1">Environmental Impact:</div>
-                          <div className="text-xs text-green-600">
-                            CO2: {route.totalCO2Saved} • Water: {route.totalWaterTreated}
-                          </div>
-                        </div>
-                      )} */}
-
-                      <button className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors">
-                        Explore Route
-                      </button>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Distance:</span>
+                      <span className="font-medium">{route.distance}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Duration:</span>
+                      <span className="font-medium">{route.duration}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Stops:</span>
+                      <span className="font-medium">{route.stops} locations</span>
                     </div>
                   </div>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">
+                      {route.theme}
+                    </span>
+                    <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium">
+                      {route.era}
+                    </span>
+                    <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                      {route.difficulty}
+                    </span>
+                  </div>
+
+                  {route.totalCO2Saved && (
+                    <div className="bg-green-50 p-3 rounded-lg mb-4">
+                      <div className="text-xs text-green-700 font-medium mb-1">Environmental Impact:</div>
+                      <div className="text-xs text-green-600">
+                        CO2: {route.totalCO2Saved} • Water: {route.totalWaterTreated}
+                      </div>
+                    </div>
+                  )}
+
+                  <button className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors">
+                    Explore Route
+                  </button>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
       )}
 
       {/* Route Detail View */}
@@ -455,7 +444,7 @@ export default function GreenTrailPage() {
                             <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">
                               {stop.type}
                             </span>
-                            <span className="text-white text-xs">{stop.year}</span>
+                            <span className="text-gray-500 text-xs">{stop.year}</span>
                           </div>
                           <h3 className="text-lg font-semibold">{stop.name}</h3>
                           <p className="text-green-600 mb-2 italic text-sm">{stop.teaser}</p>
@@ -463,7 +452,7 @@ export default function GreenTrailPage() {
                             Impact: {stop.impact}
                           </p>
                         </div>
-                        <div className="text-right text-sm text-white">
+                        <div className="text-right text-sm text-gray-500">
                           <div>{stop.walkTime}</div>
                           <div>{stop.walkDistance}</div>
                           <div className="font-medium">Total: {stop.totalTime}</div>
@@ -496,7 +485,7 @@ export default function GreenTrailPage() {
                     <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-medium">
                       {selectedStop.type}
                     </span>
-                    <span className="text-white text-sm">{selectedStop.year}</span>
+                    <span className="text-gray-500 text-sm">{selectedStop.year}</span>
                   </div>
                   <h2 className="text-2xl font-bold mb-2">{selectedStop.name}</h2>
                   <p className="text-green-600 italic text-lg">{selectedStop.teaser}</p>
@@ -537,7 +526,8 @@ export default function GreenTrailPage() {
           </div>
         </div>
       )}
-      {/* 
+
+      {/* Call to Action */}
       <div className="bg-gradient-to-r from-emerald-600 to-green-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Explore Sydney's Green Stories?</h2>
@@ -553,7 +543,7 @@ export default function GreenTrailPage() {
             </button>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   )
 }

@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import Navbar from './components/Navbar'
 
-const inter = Inter({ subsets: ['latin'] })
+// const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Grand Key Club',
@@ -17,18 +17,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Libertinus+Serif+Display&display=swap" rel="stylesheet" />
+      </head>
+      <body className='libertinus-serif-display-regular'>
         {/* Background image with overlay for transparency */}
-        <div 
+        <div
           className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
+          style={{
             backgroundImage: 'url("/Sydney Harbour Bridge.jpg")',
-            zIndex: -2 
+            zIndex: -2
           }}
         ></div>
         {/* Semi-transparent overlay to reduce image clarity */}
         <div className="fixed inset-0 bg-white bg-opacity-70 z-[-1]"></div>
-        
+
         <Navbar />
         <main className="relative z-10">
           {children}
