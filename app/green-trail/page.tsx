@@ -270,7 +270,7 @@ export default function GreenTrailPage() {
     <div className="h-screen">
       {/* Hero Section */}
       <div className="container mx-auto px-4 pt-16 bg-gradient-to-b from-emerald-900/70 to-transparent">
-        <h1 className="reveal text-4xl font-semibold mb-4 mt-4"
+        <h1 className="reveal text-4xl font-semibold my-6"
           style={{ ["--delay" as any]: "0ms" }}>Sydney Green Trails</h1>
         <p className="reveal text mb-1 opacity-90 max-w-3xl"
           style={{ ["--delay" as any]: "70ms" }}>
@@ -304,9 +304,11 @@ export default function GreenTrailPage() {
       {/* Routes Selection */}
       {!selectedRoute && (
         <section className="container max-w-screen px-4 pt-16 pb-40">
-          <h2 className="text-3xl font-bold mb-6">Choose Your Green Adventure</h2>
+          <h2 className="reveal text-3xl font-bold mb-6"
+            style={{ ["--delay" as any]: "100ms" }}>Choose Your Green Adventure</h2>
 
-          <div className="relative overflow-visible">
+          <div className="reveal relative overflow-visible"
+            style={{ ["--delay" as any]: "200ms" }}>
             <div
               className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden gap-6"
               aria-label="Routes carousel"
