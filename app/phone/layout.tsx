@@ -4,6 +4,7 @@
 import Image from "next/image";
 import "./index.css";
 import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 function IconMenu() {
   return (
@@ -53,6 +54,10 @@ export default function RootLayout({
 }) {
   const [now, setNow] = useState(new Date());
 
+  // ……组件里
+  const router = useRouter();
+  const pathname = usePathname();
+
   useEffect(() => {
     const timer = setInterval(() => {
       setNow(new Date());
@@ -71,15 +76,31 @@ export default function RootLayout({
   });
 
 
-  const [activeIndex, setActiveIndex] = useState(2);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const buttons = [
-    { icon: <IconMembers /> },
-    { icon: <IconDining /> },
-    { icon: <IconTee /> },
-    { icon: <IconCalendar /> },
-    { icon: <IconMembers /> },
+    { icon: <IconMembers />, to: "/phone/comming-soon1" },
+    { icon: <IconDining />, to: "/phone/infractructure-path" },
+    { icon: <IconTee />, to: "/phone/green-trail" },
+    { icon: <IconCalendar />, to: "/phone/storylines" },
+    { icon: <IconMembers />, to: "/phone/comming-soon2" },
   ];
+
+
+  useEffect(() => {
+    const i = buttons.findIndex(b => pathname.startsWith(b.to));
+    setActiveIndex(i >= 0 ? i : null);
+  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const buttonClick = (to: string, i: number) => {
+    if (activeIndex === i) {
+      setActiveIndex(null);
+      router.push("/phone");
+    } else {
+      setActiveIndex(i);
+      router.push(to);
+    }
+  };
 
 
   return (
@@ -120,15 +141,16 @@ export default function RootLayout({
         >
           <div className="mt-3 flex items-center justify-center gap-2">
             {buttons.map((btn, i) => {
-              const distance = Math.abs(i - activeIndex);
-
-              let zoom = 1 - distance * 0.15;
-              if (zoom < 0.7) zoom = 0.7;
+              const baseZoom = 0.85;
+              const zoom =
+                activeIndex === null
+                  ? baseZoom
+                  : Math.max(0.7, 1 - Math.abs(i - activeIndex) * 0.15);
 
               return (
                 <div
                   key={i}
-                  onClick={() => setActiveIndex(i)}
+                  onClick={() => buttonClick(btn.to, i)}
                   style={{ ["--zoom" as any]: zoom }}
                   className={`main-button ${i === activeIndex ? "active" : ""}`}
                 >

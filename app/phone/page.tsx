@@ -67,17 +67,6 @@ export default function Home() {
     });
 
 
-    const [activeIndex, setActiveIndex] = useState(2);
-
-    const buttons = [
-        { icon: <IconMembers /> },
-        { icon: <IconDining /> },
-        { icon: <IconTee /> },
-        { icon: <IconCalendar /> },
-        { icon: <IconMembers /> },
-    ];
-
-
     return (
         <>
 
