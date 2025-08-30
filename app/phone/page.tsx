@@ -1,6 +1,9 @@
+"use client"
+
 // app/page.tsx  (JS 也可，按需改扩展名)
 import Image from "next/image";
 import "./index.css";
+import { useEffect, useState } from "react";
 
 function IconMenu() {
     return (
@@ -43,6 +46,38 @@ function IconMembers() {
 }
 
 export default function Home() {
+
+    const [now, setNow] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setNow(new Date());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const formatted = now.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+    });
+
+
+    const [activeIndex, setActiveIndex] = useState(2);
+
+    const buttons = [
+        { icon: <IconMembers /> },
+        { icon: <IconDining /> },
+        { icon: <IconTee /> },
+        { icon: <IconCalendar /> },
+        { icon: <IconMembers /> },
+    ];
+
+
     return (
         <main className="min-h-screen grid place-items-center bg-neutral-600 font-sans text-white">
             <Image
@@ -71,7 +106,7 @@ export default function Home() {
 
                 <p className="reveal mt-3 text-xs tracking-widest uppercase opacity-80"
                     style={{ ["--delay" as any]: "0ms" }}
-                >30/08/2025</p>
+                > {formatted}</p>
 
                 <h1 className="reveal mt-3 text-3xl"
                     style={{ ["--delay" as any]: "200ms" }}
@@ -106,35 +141,23 @@ export default function Home() {
                     style={{ ["--delay" as any]: "600ms" }}
                 >
                     <div className="mt-3 flex items-center justify-center gap-2">
-                        <div style={{
-                            "--zoom": 0.7,
-                        } as React.CSSProperties} className="main-button">
-                            <IconMembers />
-                        </div>
+                        {buttons.map((btn, i) => {
+                            const distance = Math.abs(i - activeIndex);
 
-                        <div style={{
-                            "--zoom": 0.85,
-                        } as React.CSSProperties} className="main-button">
-                            <IconDining />
-                        </div>
+                            let zoom = 1 - distance * 0.15;
+                            if (zoom < 0.7) zoom = 0.7;
 
-                        <div style={{
-                            "--zoom": 1.0,
-                        } as React.CSSProperties} className="main-button active">
-                            <IconTee />
-                        </div>
-
-                        <div style={{
-                            "--zoom": 0.85,
-                        } as React.CSSProperties} className="main-button">
-                            <IconCalendar />
-                        </div>
-
-                        <div style={{
-                            "--zoom": 0.7,
-                        } as React.CSSProperties} className="main-button">
-                            <IconMembers />
-                        </div>
+                            return (
+                                <div
+                                    key={i}
+                                    onClick={() => setActiveIndex(i)}
+                                    style={{ ["--zoom" as any]: zoom }}
+                                    className={`main-button ${i === activeIndex ? "active" : ""}`}
+                                >
+                                    {btn.icon}
+                                </div>
+                            );
+                        })}
                     </div>
 
 
