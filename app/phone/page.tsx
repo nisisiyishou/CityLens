@@ -1,6 +1,6 @@
 "use client"
 
-// app/page.tsx  (JS 也可，按需改扩展名)
+// app/page.tsx
 import Image from "next/image";
 import "./index.css";
 import { useEffect, useState } from "react";
@@ -47,7 +47,7 @@ function IconMembers() {
 
 export default function Home() {
 
-    const [now, setNow] = useState(new Date());
+    const [now, setNow] = useState(new Date(0));
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -79,23 +79,7 @@ export default function Home() {
 
 
     return (
-        <main className="min-h-screen grid place-items-center bg-neutral-600 font-sans text-white">
-            <Image
-                src="/sydney-bridge.jpg"
-                alt="background"
-                fill
-                priority
-                className="object-cover"
-            />
-
-
-
-            {/* <div className="absolute inset-0 bg-emerald-900/40" /> */}
-
-            <div className="absolute inset-0 bg-emerald-900/25" />
-
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-emerald-900/70 via-transparent to-transparent" />
-
+        <>
 
 
             <section className="flex flex-col items-center absolute left-0 right-0 px-6" style={{ top: "5%" }}>
@@ -133,41 +117,6 @@ export default function Home() {
                     Infractructure Path
                 </button>
             </section>
-
-            <footer className="absolute inset-x-0 bottom-0 overflow-hidden">
-                <div className="absolute -inset-x-6 bottom-0 top-0 bg-gradient-to-t from-emerald-950/80 via-emerald-900/40 to-transparent" />
-
-                <div className="reveal relative px-6 pb-3"
-                    style={{ ["--delay" as any]: "600ms" }}
-                >
-                    <div className="mt-3 flex items-center justify-center gap-2">
-                        {buttons.map((btn, i) => {
-                            const distance = Math.abs(i - activeIndex);
-
-                            let zoom = 1 - distance * 0.15;
-                            if (zoom < 0.7) zoom = 0.7;
-
-                            return (
-                                <div
-                                    key={i}
-                                    onClick={() => setActiveIndex(i)}
-                                    style={{ ["--zoom" as any]: zoom }}
-                                    className={`main-button ${i === activeIndex ? "active" : ""}`}
-                                >
-                                    {btn.icon}
-                                </div>
-                            );
-                        })}
-                    </div>
-
-
-                    <p className="mt-2 text-center text-xs text-gray-300">Urban Green Trail</p>
-
-                    <p className="mt-5 text-center text-[10px] tracking-[0.35em] uppercase text-white/30">
-                        Explore the city
-                    </p>
-                </div>
-            </footer>
-        </main>
+        </>
     );
 }
