@@ -89,7 +89,7 @@ function VRSkyModal({
   )
 }
 
-// Urban Green Trail routes data
+
 const greenTrailRoutes = [
   {
     id: 1,
@@ -420,7 +420,7 @@ export default function GreenTrailPage() {
                   >
                     <div className="p-6">
                       <div className="mb-4">
-                        <h3 className="text-black text-xl font-bold mb-2">{route.title}</h3>
+                        <h3 className="text-green-700 text-xl font-bold mb-2">{route.title}</h3>
                         <p className="text-black text-sm mb-4">{route.summary}</p>
                       </div>
 
@@ -488,7 +488,7 @@ export default function GreenTrailPage() {
 
           {/* Route Header */}
           <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-            <h1 className="text-3xl font-bold mb-2">{selectedRoute.title}</h1>
+            <h1 className="text-green-700 text-3xl font-bold mb-2">{selectedRoute.title}</h1>
             <p className="text-gray-600 mb-4">{selectedRoute.summary}</p>
 
             {selectedRoute.totalCO2Saved && (
@@ -530,7 +530,7 @@ export default function GreenTrailPage() {
 
           {/* Timeline of Stops */}
           <div className="bg-white rounded-xl shadow-md p-6">
-            <h2 className="text-2xl font-bold mb-6">Route Timeline</h2>
+            <h2 className="text-green-700 text-2xl font-bold mb-6">Route Timeline</h2>
 
             <div className="relative">
               {/* Vertical line */}
