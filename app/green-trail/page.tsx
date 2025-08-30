@@ -130,7 +130,8 @@ const greenTrailRoutes = [
         story: "The 'Green Bans' movement started here in 1971, when construction workers refused to demolish historic buildings, combining labor rights with environmental activism.",
         impact: "150kg vegetables grown annually",
         year: "2015",
-        type: "Community Garden"
+        type: "Community Garden",
+        vrImageUrl: "/images/vr/guerrilla-garden-360.jpg"
       },
       {
         id: 3,
@@ -171,7 +172,8 @@ const greenTrailRoutes = [
         story: "When developers wanted to remove this massive Moreton Bay Fig in 1988, local residents chained themselves to its trunk for 3 weeks. The tree won. Its root system now anchors a small park, and its canopy covers half a city block.",
         impact: "32 tonnes CO2 stored in trunk",
         year: "1988 (saved)",
-        type: "Heritage Tree"
+        type: "Heritage Tree",
+        vrImageUrl: "/images/vr/survivor-tree-360.jpg"
       },
       {
         id: 6,
@@ -184,7 +186,8 @@ const greenTrailRoutes = [
         story: "This narrow strip between buildings was transformed into a public food forest with fruit trees, herb spirals, and edible flowers. Office workers regularly harvest ingredients for lunch, and the space produces 200kg of free food annually.",
         impact: "200kg free food/year",
         year: "2021",
-        type: "Food Forest"
+        type: "Food Forest",
+        vrImageUrl: "/images/vr/pocket-food-forest-360.jpg"
       }
     ]
   },
