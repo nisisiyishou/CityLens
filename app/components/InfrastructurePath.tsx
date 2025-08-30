@@ -64,7 +64,7 @@ function NodeTypeCard({ iconSrc, title, examples }: NodeTypeCardProps) {
 
 export default function InfrastructurePathCard() {
     return (
-        <div className="relative p-4 min-h-[100vh] overflow-hidden">
+        <div className="relative p-4 min-h-[100vh] overflow-hidden mt-8">
 
             {/* Navigation bar */}
             <nav className="absolute top-0 left-0 right-0 z-20 flex justify-around items-center py-4 bg-white/80 backdrop-blur border-b border-slate-200">
