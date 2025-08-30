@@ -79,11 +79,11 @@ export default function RootLayout({
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const buttons = [
-    { icon: <IconMembers />, to: "/phone/1" },
+    { icon: <IconMembers />, to: "/phone/comming-soon1" },
     { icon: <IconDining />, to: "/phone/infractructure-path" },
     { icon: <IconTee />, to: "/phone/green-trail" },
     { icon: <IconCalendar />, to: "/phone/storylines" },
-    { icon: <IconMembers />, to: "/phone/4" },
+    { icon: <IconMembers />, to: "/phone/comming-soon2" },
   ];
 
 
