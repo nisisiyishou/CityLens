@@ -80,9 +80,9 @@ export default function RootLayout({
 
   const buttons = [
     { icon: <IconMembers />, to: "/phone/1" },
-    { icon: <IconDining />, to: "/phone/2" },
+    { icon: <IconDining />, to: "/phone/infractructure-path" },
     { icon: <IconTee />, to: "/phone/green-trail" },
-    { icon: <IconCalendar />, to: "/phone/3" },
+    { icon: <IconCalendar />, to: "/phone/storylines" },
     { icon: <IconMembers />, to: "/phone/4" },
   ];
 
