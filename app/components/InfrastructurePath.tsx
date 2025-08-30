@@ -64,24 +64,31 @@ function NodeTypeCard({ iconSrc, title, examples }: NodeTypeCardProps) {
 
 export default function InfrastructurePathCard() {
     return (
-        <div className="relative p-4 min-h-[100vh] overflow-hidden">
+        <div className="relative p-4 min-h-[100vh] overflow-hidden mt-8">
 
             {/* Navigation bar */}
             <nav className="absolute top-0 left-0 right-0 z-20 flex justify-around items-center py-4 bg-white/80 backdrop-blur border-b border-slate-200">
-                <CircleIcon label="Toilet"><IconToilet /></CircleIcon>
-                <CircleIcon label="Charger"><IconCharger /></CircleIcon>
-                <CircleIcon label="Bench"><IconBench /></CircleIcon>
-                <CircleIcon label="Water"><IconWater /></CircleIcon>
+            <CircleIcon label="Toilet"><IconToilet /></CircleIcon>
+            <CircleIcon label="Charger"><IconCharger /></CircleIcon>
+            <CircleIcon label="Bench"><IconBench /></CircleIcon>
+            <CircleIcon label="Water"><IconWater /></CircleIcon>
             </nav>
 
-            <Image
-                className="dark:invert p-2"
-                src="/bg1.png"
-                alt="Next.js logo"
-                width={400}
-                height={400}
-                priority
+            <div>
+
+            <div className="h-16"></div>
+            <div className="relative w-full h-[calc(100vh-64px)]">
+             <Image
+            className="dark:invert p-2 w-full h-full object-cover"
+            src="/bg1.png"
+            alt="Next.js logo"
+            fill
+            priority
             />
+            </div>
+            
+            </div>
+            
         </div>
     );
 }
