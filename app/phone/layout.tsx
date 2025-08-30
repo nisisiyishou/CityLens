@@ -161,7 +161,7 @@ export default function RootLayout({
           </div>
 
 
-          <p className="mt-2 text-center text-xs text-gray-300">Urban Green Trail</p>
+          <p className="mt-2 text-center text-xs text-gray-300">Hackathon - Banana Overloads of chaos.</p>
 
           <p className="mt-5 text-center text-[10px] tracking-[0.35em] uppercase text-white/30">
             Explore the city
