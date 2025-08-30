@@ -35,6 +35,8 @@ export default function RootLayout({
         <div className="fixed inset-0 bg-white bg-opacity-70 z-[-1]"></div>
 
         <Navbar />
+
+        {/* Main content */}
         <main className="relative z-10">
           {children}
         </main>
