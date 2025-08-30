@@ -11,7 +11,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg relative z-50">
+    <nav className="absolute top-0 left-0 right-0 bg-gradient-to-r from-gray-800 to-gray-900 shadow-lg z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Hamburger menu button - top left */}
