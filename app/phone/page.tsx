@@ -46,26 +46,50 @@ export default function Home() {
     return (
         <main className="min-h-screen grid place-items-center bg-neutral-600 font-sans text-white">
             <Image
-                src="/a.jpg"
+                src="/sydney-bridge.jpg"
                 alt="background"
                 fill
                 priority
                 className="object-cover"
             />
 
+
+
             <div className="absolute inset-0 bg-emerald-900/40" />
 
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-emerald-900/70 via-transparent to-transparent" />
 
-            <section className="flex flex-col items-center absolute left-0 right-0 px-6" style={{ top: "42%" }}>
-                <p className="text-xs tracking-widest uppercase opacity-80">10/10/2019</p>
-                <h1 className="mt-3 text-3xl font-semibold">Sydney City Lens</h1>
+
+
+            <section className="flex flex-col items-center absolute left-0 right-0 px-6" style={{ top: "5%" }}>
+            </section>
+
+            {/* 42 */}
+            <section className="flex flex-col items-center absolute left-0 right-0 px-6" style={{ top: "35%" }}>
+
+                <p className="mt-3 text-xs tracking-widest uppercase opacity-80">30/08/2025</p>
+
+                <h1 className="mt-3 text-3xl">Sydney City Lens</h1>
 
                 <button
                     className="mt-8 inline-flex items-center gap-2 border-t border-b border-t-white/70 border-b-white/70 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
                     aria-label="Learn more"
                 >
-                    LEARN MORE
+                    Urban Green Trail
+                </button>
+
+                <button
+                    className="mt-5 inline-flex items-center gap-2 border-t border-b border-t-white/70 border-b-white/70 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+                    aria-label="Learn more"
+                >
+                    Forgotten Stories Line
+                </button>
+
+                <button
+                    className="mt-5 inline-flex items-center gap-2 border-t border-b border-t-white/70 border-b-white/70 px-3 py-1 text-xs tracking-[0.25em] uppercase backdrop-blur-sm"
+                    aria-label="Learn more"
+                >
+                    Infractructure Path
                 </button>
             </section>
 
@@ -106,9 +130,9 @@ export default function Home() {
                     </div>
 
 
-                    <p className="mt-2 text-center text-sm">Select To Start</p>
+                    <p className="mt-2 text-center text-xs text-gray-300">Urban Green Trail</p>
 
-                    <p className="mt-3 text-center text-[10px] tracking-[0.35em] uppercase text-white/70">
+                    <p className="mt-5 text-center text-[10px] tracking-[0.35em] uppercase text-white/30">
                         Explore the city
                     </p>
                 </div>
