@@ -121,6 +121,20 @@ const { isLoaded } = useLoadScript({
 
   const defaultCenter = { lat: -33.8688, lng: 151.2093 }; // Sydney
 
+  const mapOptions = {
+    styles: [
+      { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+      { featureType: 'poi.school', stylers: [{ visibility: 'off' }] },
+      { featureType: 'poi.medical', stylers: [{ visibility: 'off' }] },
+      { featureType: 'poi.place_of_worship', stylers: [{ visibility: 'off' }] },
+      { featureType: 'poi.business', stylers: [{ visibility: 'off' }] },
+      { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+      { featureType: 'road.arterial', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+      { featureType: 'road.local', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+      { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
+    ],
+  } as google.maps.MapOptions;
+
   return (
     <div className="w-screen h-screen pt-16 flex flex-col">
       <div className="flex flex-wrap gap-2 mb-3" style={{ marginLeft: '20px' }}>
@@ -163,6 +177,7 @@ const { isLoaded } = useLoadScript({
           mapContainerClassName="w-full overflow-hidden flex-grow"
           center={userPos ?? defaultCenter}
           zoom={12}
+          options={mapOptions}
           onLoad={(map) => {
             mapRef.current = map;
             geocoderRef.current = new google.maps.Geocoder();
