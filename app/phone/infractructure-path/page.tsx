@@ -199,7 +199,7 @@ export default function FacilityFilter() {
             >
               <img src={`/icons/${t}.svg`} alt="" className="w-7 h-7 pointer-events-none" />
               {active && (
-                <span className="absolute -top-1 -right-1 inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white" />
+                <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 inline-block w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white" />
               )}
             </button>
           );
@@ -210,7 +210,7 @@ export default function FacilityFilter() {
         <GoogleMap
           mapContainerClassName="w-full overflow-hidden flex-grow"
           center={userPos ?? defaultCenter}
-          zoom={17
+          zoom={16
     
 }
           options={mapOptions}
