@@ -10,7 +10,7 @@
 
 ## Overview
 
-CityLens is a lightweight mobile app that helps people build a more human connection with their city through three complementary pathways:
+CityLens is a lightweight web app that helps people build a more human connection with their city through three complementary pathways:
 
 1. **Infrastructure Path** – a people-first utility map showing nearby **toilets, bins, water stations, and power plugs**, with context like venue/floor and hours (useful for gig workers and everyday walkers).
 2. **Forgotten Stories Line** – narrative walking routes with **VR/360°** moments that overlay past and present for lesser-known places.
