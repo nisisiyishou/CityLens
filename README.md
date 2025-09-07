@@ -2,7 +2,9 @@
 
 **Tagline:** *See your city differently — routes for people, stories, and planet.*
 
-[▶️ Watch the 3-min demo](https://youtu.be/56cKigp4lDg)
+## Demo
+
+[![Watch the demo](https://img.youtube.com/vi/56cKigp4lDg/hqdefault.jpg)](https://youtu.be/56cKigp4lDg "Click to play on YouTube")
 
 ---
 
